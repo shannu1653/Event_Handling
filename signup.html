@@ -194,7 +194,7 @@ function signup() {
   btn.innerText = "Creating account...";
   loader.style.display = "block";
 
-  fetch("http://127.0.0.1:8000/api/signup/", {
+  fetch("https://aiven-deploye.onrender.com/api/signup/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
