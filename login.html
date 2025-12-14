@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* ===== LOADER ===== */
+.loader {
+  width: 40px;
+  height: 40px;
+  margin: 15px auto 0;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ===== PAGE ===== */
+body {
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== CARD ===== */
+.login-card {
+  background: #fff;
+  width: 360px;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ===== INPUTS ===== */
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* ===== BUTTON ===== */
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #667eea;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-card button:hover {
+  background: #5a67d8;
+}
+
+/* ===== SIGNUP LINK ===== */
+.login-card p {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-card a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ===== POPUP ===== */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 25px;
+  width: 300px;
+  border-radius: 12px;
+  text-align: center;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.popup-box.success {
+  border-top: 6px solid #22c55e;
+}
+
+.popup-box.error {
+  border-top: 6px solid #ef4444;
+}
+
+.popup-box h3 {
+  margin: 10px 0;
+}
+
+.popup-box button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+  <h2>Login</h2>
+  <div class="loader" id="loader"></div>
+
+
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+
+ <button id="loginBtn" onclick="login()">Login</button>
+
+  <p>
+    New user?
+    <a href="signup.html">Sign Up</a>
+  </p>
+</div>
+
+<!-- ===== POPUP ===== -->
+<div class="popup" id="popup">
+  <div class="popup-box" id="popupBox">
+    <h3 id="popupMsg"></h3>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
+
+   if (localStorage.getItem("loggedIn") === "true") {
+    window.location.href = "index.html";
+  }
+function showPopup(message, type) {
+  const popup = document.getElementById("popup");
+  const box = document.getElementById("popupBox");
+  const msg = document.getElementById("popupMsg");
+
+  box.className = "popup-box " + type;
+  msg.innerText = message;
+  popup.style.display = "flex";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+
+function login() {
+  const loader = document.getElementById("loader");
+  const btn = document.getElementById("loginBtn");
+
+  loader.style.display = "block";     // show spinner
+  btn.disabled = true;
+  btn.innerText = "Logging in...";
+
+  fetch("http://127.0.0.1:8000/api/login/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    loader.style.display = "none";
+    btn.disabled = false;
+    btn.innerText = "Login";
+
+    if (data.success) {
+      localStorage.setItem("loggedIn", "true");
+      showPopup("Login Successful 🎉", "success");
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1500);
+    } else {
+      showPopup("Invalid Username or Password ❌", "error");
+    }
+  })
+  .catch(() => {
+    loader.style.display = "none";
+    btn.disabled = false;
+    btn.innerText = "Login";
+    showPopup("Server not reachable ⚠️", "error");
+  });
+}
+</script>
+
+</body>
+</html>

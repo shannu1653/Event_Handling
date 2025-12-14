@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchase History — 3.0</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --accent:#ff5a3c;
+      --muted:#6b7280;
+      --card-bg:#ffffff;
+      --shadow:0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    body{
+      background:linear-gradient(135deg,#fff7f3,#f8fbff);
+      font-family:Inter, sans-serif;
+      padding:20px;
+    }
+
+    .historyWrap{
+      max-width:900px;
+      margin:auto;
+    }
+
+    .brandBadge{
+      background:var(--accent);
+      color:white;
+      padding:12px 14px;
+      border-radius:10px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:var(--shadow);
+      font-size:17px;
+    }
+
+    .receiptCard{
+      background:var(--card-bg);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+      padding:18px;
+      transition:.3s;
+      border:1px solid rgba(0,0,0,0.04);
+    }
+
+    .receiptHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .receiptItems{
+      margin-top:14px;
+      border-top:1px dashed rgba(0,0,0,0.06);
+      padding-top:12px;
+      display:none;
+    }
+
+    .receiptItem{
+      padding:8px 0;
+      border-bottom:1px solid rgba(0,0,0,0.05);
+    }
+
+    .emptyState{
+      text-align:center;
+      margin-top:30px;
+      background:white;
+      padding:40px;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      color:var(--muted);
+    }
+
+    /* smooth open animation */
+    .openAnim{
+      animation:fadeOpen .35s ease;
+    }
+
+    @keyframes fadeOpen{
+      from{opacity:0; transform:translateY(-6px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+  </style>
+</head>
+<body>
+
+<div class="historyWrap">
+
+  <!-- HEADER -->
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="brandBadge"><i class="fa-solid fa-receipt"></i> Purchase History</div>
+    <h3 class="m-0">Your previous ticket receipts</h3>
+  </div>
+
+  <!-- Clear All -->
+  <button id="clearHistory" class="btn btn-danger mb-3">
+    <i class="fa-solid fa-trash"></i> Clear All History
+  </button>
+
+  <!-- Receipt List -->
+  <div id="historyList"></div>
+
+  <!-- Empty -->
+  <div id="emptyState" class="emptyState" style="display:none;">
+    <h4>No purchase history found</h4>
+    <p>Checkout tickets to see them here.</p>
+    <a href="tickets.html" class="btn btn-primary" style="background:var(--accent); border:none;">Go to Tickets</a>
+  </div>
+
+</div>
+
+<script>
+/****************************************************
+ * Purchase History Page — Beginner Friendly JS
+ * Reads localStorage.purchaseHistory
+ * Shows receipts, items, totals
+ * Expand/Collapse
+ * Delete single receipt
+ * Clear all history
+ ****************************************************/
+
+// Shortcut selector
+function $(s){ return document.querySelector(s); }
+
+// Escape HTML safety
+function escapeHtml(str){
+  return String(str || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+// Load history
+function loadHistory(){
+  try{
+    return JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+  }catch(e){
+    return [];
+  }
+}
+
+// Save history
+function saveHistory(h){
+  localStorage.setItem('purchaseHistory', JSON.stringify(h));
+}
+
+// Format date
+function formatDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleString();
+}
+
+// Format currency
+function formatCurrency(n){
+  return Number(n).toLocaleString(undefined, {
+    style:'currency',
+    currency:'USD'
+  });
+}
+
+// Render all receipts
+function renderHistory(){
+  const list = $('#historyList');
+  const empty = $('#emptyState');
+  const data = loadHistory();
+
+  list.innerHTML = '';
+
+  if(data.length === 0){
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  data.forEach((receipt, index) => {
+
+    const card = document.createElement('div');
+    card.className = 'receiptCard openAnim';
+
+    card.innerHTML = `
+      <div class="receiptHeader">
+        <div>
+          <strong>Receipt #${index + 1}</strong><br>
+          <small class="text-muted">${formatDate(receipt.purchasedAt)}</small>
+        </div>
+
+        <div class="d-flex gap-2">
+          <span class="badge bg-success" style="font-size:14px;">
+            Total: ${formatCurrency(receipt.total)}
+          </span>
+
+          <button class="btn btn-sm btn-secondary toggleBtn">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <button class="btn btn-sm btn-danger deleteBtn">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- items -->
+      <div class="receiptItems">
+        ${receipt.items.map(item => `
+          <div class="receiptItem">
+            <strong>${escapeHtml(item.title)}</strong><br>
+            <small>${escapeHtml(item.date)}</small><br>
+            <span class="text-success">${escapeHtml(item.price)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    // Expand/Collapse
+    const toggleBtn = card.querySelector('.toggleBtn');
+    const itemsBox = card.querySelector('.receiptItems');
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = itemsBox.style.display === 'block';
+      itemsBox.style.display = isOpen ? 'none' : 'block';
+      toggleBtn.innerHTML = isOpen
+        ? `<i class="fa-solid fa-chevron-down"></i>`
+        : `<i class="fa-solid fa-chevron-up"></i>`;
+    });
+
+    // Delete a receipt
+    const deleteBtn = card.querySelector('.deleteBtn');
+    deleteBtn.addEventListener('click', () => {
+      if(!confirm('Delete this receipt?')) return;
+      const h = loadHistory();
+      h.splice(index,1);
+      saveHistory(h);
+      renderHistory();
+    });
+
+    list.appendChild(card);
+  });
+}
+
+// Clear all
+$('#clearHistory').addEventListener('click', () => {
+  if(!confirm("Clear ALL purchase history?")) return;
+  localStorage.removeItem('purchaseHistory');
+  renderHistory();
+});
+
+// Initial load
+renderHistory();
+</script>
+
+</body>
+</html>

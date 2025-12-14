@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== CARD ===== */
+.signup-card {
+  background: #fff;
+  width: 380px;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.signup-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ===== INPUTS ===== */
+.signup-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.signup-card input:focus {
+  outline: none;
+  border-color: #43cea2;
+}
+
+/* ===== BUTTON ===== */
+.signup-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #43cea2;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signup-card button:hover {
+  background: #36b394;
+}
+
+.signup-card p {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.signup-card a {
+  color: #43cea2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ===== LOADER ===== */
+.loader {
+  width: 40px;
+  height: 40px;
+  margin: 15px auto 0;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #43cea2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== POPUP ===== */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 25px;
+  width: 300px;
+  border-radius: 12px;
+  text-align: center;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.popup-box.success {
+  border-top: 6px solid #22c55e;
+}
+
+.popup-box.error {
+  border-top: 6px solid #ef4444;
+}
+
+.popup-box h3 {
+  margin: 10px 0;
+}
+
+.popup-box button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #43cea2;
+  color: #fff;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="signup-card">
+  <h2>Create Account</h2>
+
+  <input id="username" placeholder="Username">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <input id="dob" type="date">
+  <input id="place" placeholder="Place">
+
+  <button id="signupBtn" onclick="signup()">Sign Up</button>
+
+  <div class="loader" id="loader"></div>
+
+  <p>
+    Already have an account?
+    <a href="login.html">Login</a>
+  </p>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-box" id="popupBox">
+    <h3 id="popupMsg"></h3>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
+function showPopup(message, type) {
+  const popup = document.getElementById("popup");
+  const box = document.getElementById("popupBox");
+  const msg = document.getElementById("popupMsg");
+
+  box.className = "popup-box " + type;
+  msg.innerText = message;
+  popup.style.display = "flex";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+
+function signup() {
+  const btn = document.getElementById("signupBtn");
+  const loader = document.getElementById("loader");
+
+  btn.disabled = true;
+  btn.innerText = "Creating account...";
+  loader.style.display = "block";
+
+  fetch("http://127.0.0.1:8000/api/signup/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: document.getElementById("username").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      dob: document.getElementById("dob").value,
+      place: document.getElementById("place").value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    loader.style.display = "none";
+    btn.disabled = false;
+    btn.innerText = "Sign Up";
+
+    if (data.message) {
+      showPopup("Signup Successful 🎉\nPlease login.", "success");
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+    } else {
+      showPopup("Signup failed ❌", "error");
+    }
+  })
+  .catch(() => {
+    loader.style.display = "none";
+    btn.disabled = false;
+    btn.innerText = "Sign Up";
+    showPopup("Backend not reachable ⚠️", "error");
+  });
+}
+</script>
+
+</body>
+</html>
