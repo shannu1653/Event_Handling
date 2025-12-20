@@ -5,8 +5,9 @@
 /* -------------------------
    API CONFIG (ADDED)
 ------------------------- */
-const API_BASE = "http://127.0.0.1:8000/api2";
-const MEDIA_BASE = "http://127.0.0.1:8000/media/";
+const API_BASE = "https://aiven-deploye.onrender.com/api2";
+const MEDIA_BASE = "https://aiven-deploye.onrender.com/media/";
+
 
 /* -------------------------
    DOM ELEMENTS
@@ -165,8 +166,8 @@ saveEventBtn.addEventListener('click', async () => {
 
     try {
         const url = editingEventId === null
-            ? "http://127.0.0.1:8000/api2/create-event/"
-            : `http://127.0.0.1:8000/api2/update-event/${editingEventId}/`;
+            ? "https://aiven-deploye.onrender.com/api2/create-event/"
+            : `https://aiven-deploye.onrender.com/api2/update-event/${editingEventId}/`;
 
         const res = await fetch(url, {
             method: "POST",
