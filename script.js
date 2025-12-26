@@ -207,7 +207,7 @@ async function loadEvents() {
 
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
-                <img src="${MEDIA_BASE}${ev.image}" class="eventImg">
+                <img src="${ev.image ? MEDIA_BASE + ev.image : 'https://via.placeholder.com/300x180?text=No+Image'}" class="eventImg">
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
                     <p class="eventDate">${ev.date}</p>
