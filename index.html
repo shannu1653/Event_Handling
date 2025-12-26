@@ -77,9 +77,9 @@
                             Find Events
                         </a>
                     </li>
-
+                    
                     <li class="nav-item px-3">
-                        <a id="openCreateEvent" class="nav-link">Create Event</a>
+                        <button id="openCreateEvent">Create Event</button>
                     </li>
 
                     <li class="nav-item px-3 dropdown">
@@ -118,6 +118,43 @@
             </div>
         </div>
     </nav>
+
+    
+    <!-- EVENT CARDS -->
+<div id="eventsContainer" class="eventgrid"></div>
+
+<!-- LOADER -->
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Loading...</p>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay"></div>
+
+<!-- MODAL -->
+<div id="eventModal">
+  <h3>Create / Edit Event</h3>
+
+  <form id="eventForm">
+    <input type="text" id="title" placeholder="Event Title" required>
+    <input type="date" id="date" required>
+    <input type="number" id="price" placeholder="Price" required>
+    <input type="text" id="place" placeholder="Place" required>
+    <textarea id="description" placeholder="Description"></textarea>
+
+    <input type="file" id="image">
+    <img id="preview">
+
+    <button type="submit">Save Event</button>
+    <button type="button" id="closeModal">Cancel</button>
+  </form>
+</div>
+
+
+
+
+
 
     <!-- ----------------------------------------------------
          HERO SLIDER
@@ -177,208 +214,7 @@
 
     </div>
 
-    <!-- ----------------------------------------------------
-         CATEGORIES
-    ----------------------------------------------------- -->
-    <section class="categoriesSection container">
-        <div class="row justify-content-center">
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-gift"></i></div>
-                <p class="categoryTitle">Holidays</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-microphone-lines"></i></div>
-                <p class="categoryTitle">Music</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-laptop-code"></i></div>
-                <p class="categoryTitle">Tech</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-briefcase"></i></div>
-                <p class="categoryTitle">Business</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-utensils"></i></div>
-                <p class="categoryTitle">Food & Drink</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-graduation-cap"></i></div>
-                <p class="categoryTitle">Education</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-gamepad"></i></div>
-                <p class="categoryTitle">Games</p>
-            </div>
-
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 text-center categoryItem">
-                <div class="categoryCircle"><i class="fa-solid fa-basketball"></i></div>
-                <p class="categoryTitle">Sports</p>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ----------------------------------------------------
-         EVENTS + FILTERS
-    ----------------------------------------------------- -->
-    <section class="container eventsSection">
-        <h3 class="eventsHeading">Events in Hyderabad</h3>
-
-        <div class="row mb-3">
-            <div class="col-md-4 col-12 mb-2">
-                <select id="categoryFilter" class="form-control">
-                    <option value="All">All categories</option>
-                    <option>Holidays</option>
-                    <option>Music</option>
-                    <option>Tech</option>
-                    <option>Business</option>
-                    <option>Food & Drink</option>
-                    <option>Education</option>
-                    <option>Games</option>
-                    <option>Sports</option>
-                </select>
-            </div>
-
-            <div class="col-md-4 col-12 mb-2">
-                <input id="searchFilter" type="text" class="form-control" placeholder="Search events by title...">
-            </div>
-        </div>
-
-        <div id="eventsContainer" class="row g-4">
-
-            <!-- ----------------------------------------------------
-                 STATIC EVENT CARD 1
-            ----------------------------------------------------- -->
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="eventCard" data-category="Business">
-
-                    <img src="https://i.ibb.co/ZJ7Vhgf/event1.png" class="eventImg">
-
-                    <div class="eventInfo">
-                        <h5 class="eventTitle">Meditation Class & Career Empowerment</h5>
-                        <p class="eventDate">Wed, Apr 15 • 9:00 PM</p>
-                        <p class="eventPrice">From $3.00</p>
-
-                        <div class="actionRow d-flex gap-2">
-                            <button class="btn btn-primary btn-sm viewBtn">View</button>
-                            <button class="btn btn-warning btn-sm editBtn">Edit</button>
-                            <button class="btn btn-danger btn-sm deleteBtn">Delete</button>
-
-                            <!-- ⭐ STATIC BUY BUTTON ⭐ -->
-                            <button class="btn btn-success btn-sm buyBtn staticBuyBtn">Buy</button>
-
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- ----------------------------------------------------
-                 STATIC EVENT CARD 2
-            ----------------------------------------------------- -->
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="eventCard" data-category="Business">
-
-                    <img src="https://i.ibb.co/MkbjPBQ/event2.png" class="eventImg">
-
-                    <div class="eventInfo">
-                        <h5 class="eventTitle">Masterclass on Financial Freedom</h5>
-                        <p class="eventDate">Saturday • 2:00 PM</p>
-                        <p class="eventPrice">Free</p>
-
-                        <div class="actionRow d-flex gap-2">
-                            <button class="btn btn-primary btn-sm viewBtn">View</button>
-                            <button class="btn btn-warning btn-sm editBtn">Edit</button>
-                            <button class="btn btn-danger btn-sm deleteBtn">Delete</button>
-
-                            <!-- ⭐ STATIC BUY BUTTON ⭐ -->
-                            <button class="btn btn-success btn-sm buyBtn staticBuyBtn">Buy</button>
-
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- JS will append dynamic event cards below -->
-
-        </div>
-    </section>
-
-    <!-- ----------------------------------------------------
-         CREATE / EDIT EVENT MODAL
-    ----------------------------------------------------- -->
-    <div id="eventModalOverlay" class="eventModalOverlay"></div>
-
-    <div id="eventModal" class="eventModal">
-
-        <h3 id="eventModalTitle">Create Event</h3>
-
-        <label>Event Title</label>
-        <input id="eventTitleInput" type="text">
-
-        <label>Date & Time</label>
-        <input id="eventDateInput" type="text">
-
-        <label>Price</label>
-        <input id="eventPriceInput" type="text">
-
-        <label>Category</label>
-        <select id="eventCategoryInput">
-            <option>Holidays</option>
-            <option>Music</option>
-            <option>Tech</option>
-            <option>Business</option>
-            <option>Food & Drink</option>
-            <option>Education</option>
-            <option>Games</option>
-            <option>Sports</option>
-        </select>
-
-        <label>Description</label>
-        <textarea id="eventDescriptionInput" rows="3"></textarea>
-
-        <label>Event Image</label>
-        <input id="eventImageInput" type="file" accept="image/*">
-        <img id="eventImagePreview" class="eventImagePreview">
-
-        <div class="d-grid gap-2">
-            <button id="saveEventBtn" class="saveEventBtn">Save Event</button>
-            <button id="closeEventBtn" class="closeEventBtn">Cancel</button>
-        </div>
-
-    </div>
-
-    <!-- ----------------------------------------------------
-         VIEW EVENT MODAL
-    ----------------------------------------------------- -->
-    <div id="viewEventOverlay" class="eventModalOverlay"></div>
-
-    <div id="viewEventModal" class="eventModal">
-        <h3 id="viewEventTitle">Event Details</h3>
-
-        <img id="viewEventImage" class="eventImagePreview">
-
-        <p id="viewEventDate"></p>
-        <p id="viewEventPrice"></p>
-        <p id="viewEventCategory"></p>
-        <p id="viewEventDescription"></p>
-
-        <div class="d-grid gap-2">
-            <button id="closeViewEventBtn" class="closeEventBtn">Close</button>
-        </div>
-    </div>
-
+   
     <!-- ----------------------------------------------------
          FOOTER
     ----------------------------------------------------- -->

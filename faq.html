@@ -1,431 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FAQ — Eventbrite Clone</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ Eventbrite Clone</title>
 
-  <!-- BOOTSTRAP CSS (used for grid, accordion, buttons) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- FontAwesome (icons) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-  <!-- Small custom styles -->
   <style>
-    :root{
+    :root {
       --accent: #ff5a2d;
+      --bg: #f7f8fb;
+      --text: #222;
       --muted: #6b6b6b;
     }
 
-    body{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: #f7f8fb;
+    body {
       margin: 0;
-      color: #222;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
-    .faqHeader{
-      background: linear-gradient(90deg,#fff 0%, #fff 70%);
-      padding: 28px 16px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    /* HEADER */
+    .faqheader {
       position: sticky;
       top: 0;
-      z-index: 1020;
+      background: white;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      z-index: 10;
     }
 
-    .brand{
+    .headerbox {
+      max-width: 1000px;
+      margin: auto;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
       color: var(--accent);
-      font-weight: 700;
       font-size: 20px;
+      font-weight: bold;
       text-decoration: none;
     }
 
-    .containerSmall{
-      max-width: 920px;
-      margin: 28px auto;
-      padding: 0 16px;
-    }
-
-    h1{
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-    p.lead{
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    .accordion-button{
-      font-weight: 600;
-    }
-
-    .backRow{
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .backBtn{
-      background: transparent;
+    .backbtn {
       border: 1px solid #ddd;
       padding: 8px 12px;
       border-radius: 8px;
-      color:#333;
-      cursor:pointer;
-    }
-    .backBtn:hover{
-      background: #fff;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      text-decoration: none;
+      color: #333;
     }
 
-    /* Small responsive tweaks */
-    @media (max-width:576px){
-      h1{ font-size:22px; }
+    /* MAIN */
+    .mainbox {
+      max-width: 920px;
+      margin: 30px auto;
+      padding: 16px;
+    }
+
+    .toprow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .toprow input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    /* FAQ */
+    .faqitem {
+      background: white;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .faqquestion {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      background: white;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .faqanswer {
+      display: none;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      color: #444;
+    }
+
+    .faqitem.active .faqanswer {
+      display: block;
+    }
+
+    .footertext {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
     }
   </style>
 </head>
+
 <body>
 
-  <!-- sticky header with back to home -->
-  <header class="faqHeader d-flex align-items-center">
-    <div class="container d-flex justify-content-between align-items-center">
-      <a href="index.html" class="brand"><i class="fa-solid fa-ticket"></i> eventbrite</a>
-      <nav>
-        <a href="index.html" class="backBtn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
-      </nav>
+  <!-- HEADER -->
+  <header class="faqheader">
+    <div class="headerbox">
+      <a href="index.html" class="brand">🎟 eventbrite</a>
+      <a href="index.html" class="backbtn">← Back to Home</a>
     </div>
   </header>
 
-  <main class="containerSmall">
+  <!-- MAIN -->
+  <main class="mainbox">
 
-    <div class="backRow">
+    <div class="toprow">
       <div>
         <h1>Frequently Asked Questions</h1>
-        <p class="lead">Answers to common questions about events, tickets, and accounts.</p>
+        <p class="lead">Answers to common questions about events and tickets.</p>
       </div>
 
-      <!-- Search inside FAQ (optional) -->
-      <div style="min-width:220px;">
-        <input id="faqSearch" type="search" class="form-control" placeholder="Search FAQs (press Enter)">
-      </div>
+      <input type="search" id="faqsearch" placeholder="Search FAQs and press Enter">
     </div>
 
-    <!-- Bootstrap accordion starts (Bootstrap classes used) -->
-    <div class="accordion" id="faqAccordion">
+    <!-- FAQ LIST -->
+    <div id="faqlist">
 
-      <!-- FAQ 1 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading1">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
-            1. How do I buy a ticket?
-          </button>
-        </h2>
-        <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Click the event you want, choose ticket type and quantity, then follow checkout instructions to complete payment.
-          </div>
+      <!-- FAQ ITEM -->
+      <div class="faqitem">
+        <button class="faqquestion">1. How do I buy a ticket?</button>
+        <div class="faqanswer">
+          Click the event, select ticket type and quantity, then complete payment.
         </div>
       </div>
 
-      <!-- FAQ 2 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
-            2. Can I get a refund?
-          </button>
-        </h2>
-        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Refund policy depends on the event organizer. Check the event's ticket terms or contact the organizer for refunds.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">2. Can I get a refund?</button>
+        <div class="faqanswer">
+          Refund policy depends on the event organizer.
         </div>
       </div>
 
-      <!-- FAQ 3 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
-            3. How do I create an event?
-          </button>
-        </h2>
-        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Use the Create Event form on the homepage. Fill title, date, price and publish. You can edit later from dashboard.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">3. How do I create an event?</button>
+        <div class="faqanswer">
+          Use the Create Event option and publish your event.
         </div>
       </div>
 
-      <!-- FAQ 4 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading4">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
-            4. How do I edit or cancel my event?
-          </button>
-        </h2>
-        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Open the event from your account, choose Edit to change details, or Cancel if you want to stop the event.
-          </div>
+      <!-- Add remaining FAQs same pattern (1–20) -->
+      <div class="faqitem">
+        <button class="faqquestion">4. How do I edit or cancel my event?</button>
+        <div class="faqanswer">
+          Open your event from your account dashboard. Choose Edit to change details or Cancel to stop the event.
         </div>
       </div>
 
-      <!-- FAQ 5 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading5">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
-            5. Where are my tickets after purchase?
-          </button>
-        </h2>
-        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Tickets appear in your account under "My Tickets". You will also receive a confirmation email with ticket links.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">5. Where are my tickets after purchase?</button>
+        <div class="faqanswer">
+          Tickets appear in your account under My Tickets. You will also receive a confirmation email.
         </div>
       </div>
 
-      <!-- FAQ 6 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading6">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
-            6. How do I change my account email or password?
-          </button>
-        </h2>
-        <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Go to account settings, then update your email or password. Follow verification if you change email.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">6. How do I change my account email or password?</button>
+        <div class="faqanswer">
+          Go to account settings and update your email or password. Email changes may need verification.
         </div>
       </div>
 
-      <!-- FAQ 7 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading7">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
-            7. How do I contact the event organizer?
-          </button>
-        </h2>
-        <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            The event page often lists organizer contact. Use the Contact Organizer button or reply to the event confirmation email.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">7. How do I contact the event organizer?</button>
+        <div class="faqanswer">
+          Use the Contact Organizer option on the event page or reply to the confirmation email.
         </div>
       </div>
 
-      <!-- FAQ 8 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading8">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse8" aria-expanded="false" aria-controls="faqCollapse8">
-            8. What payment methods are accepted?
-          </button>
-        </h2>
-        <div id="faqCollapse8" class="accordion-collapse collapse" aria-labelledby="faqHeading8" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Most major credit/debit cards are accepted. Payment options depend on the organizer and region.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">8. What payment methods are accepted?</button>
+        <div class="faqanswer">
+          Most credit and debit cards are accepted. Payment methods depend on the organizer.
         </div>
       </div>
 
-      <!-- FAQ 9 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading9">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse9" aria-expanded="false" aria-controls="faqCollapse9">
-            9. Can I transfer my ticket to someone else?
-          </button>
-        </h2>
-        <div id="faqCollapse9" class="accordion-collapse collapse" aria-labelledby="faqHeading9" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Some events allow ticket transfer. Check the event's ticket policy or contact the organizer to transfer a ticket.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">9. Can I transfer my ticket to someone else?</button>
+        <div class="faqanswer">
+          Some events allow ticket transfers. Check the event ticket policy or contact the organizer.
         </div>
       </div>
 
-      <!-- FAQ 10 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading10">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse10" aria-expanded="false" aria-controls="faqCollapse10">
-            10. Why can't I open my ticket on my phone?
-          </button>
-        </h2>
-        <div id="faqCollapse10" class="accordion-collapse collapse" aria-labelledby="faqHeading10" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Try updating your browser, checking internet connection, or open the ticket email on another device. Contact organizer if issue persists.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">10. Why can't I open my ticket on my phone?</button>
+        <div class="faqanswer">
+          Try updating your browser, checking your internet connection, or opening the ticket on another device.
         </div>
       </div>
 
-      <!-- FAQ 11 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading11">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse11" aria-expanded="false" aria-controls="faqCollapse11">
-            11. How do I report a problem with an event?
-          </button>
-        </h2>
-        <div id="faqCollapse11" class="accordion-collapse collapse" aria-labelledby="faqHeading11" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Use the Support link in the Help Center or contact the event organizer directly to report problems.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">11. How do I report a problem with an event?</button>
+        <div class="faqanswer">
+          Contact the event organizer or use the support section to report the issue.
         </div>
       </div>
 
-      <!-- FAQ 12 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading12">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse12" aria-expanded="false" aria-controls="faqCollapse12">
-            12. How are online events delivered?
-          </button>
-        </h2>
-        <div id="faqCollapse12" class="accordion-collapse collapse" aria-labelledby="faqHeading12" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Organizers provide a link or instructions. You usually receive the link by email or on the event page before start time.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">12. How are online events delivered?</button>
+        <div class="faqanswer">
+          Online events are delivered through links shared by the organizer via email or event page.
         </div>
       </div>
 
-      <!-- FAQ 13 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading13">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse13" aria-expanded="false" aria-controls="faqCollapse13">
-            13. Can I sell tickets on this platform?
-          </button>
-        </h2>
-        <div id="faqCollapse13" class="accordion-collapse collapse" aria-labelledby="faqHeading13" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Yes. Create an event, set ticket types and prices, then publish the event to sell tickets.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">13. Can I sell tickets on this platform?</button>
+        <div class="faqanswer">
+          Yes. Create an event, add ticket types and prices, then publish your event.
         </div>
       </div>
 
-      <!-- FAQ 14 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading14">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse14" aria-expanded="false" aria-controls="faqCollapse14">
-            14. How do I promote my event?
-          </button>
-        </h2>
-        <div id="faqCollapse14" class="accordion-collapse collapse" aria-labelledby="faqHeading14" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Use social sharing, paid promotions (if available), or include event details and clear visuals to attract attendees.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">14. How do I promote my event?</button>
+        <div class="faqanswer">
+          Share your event on social media, use email marketing, and create attractive event details.
         </div>
       </div>
 
-      <!-- FAQ 15 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading15">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse15" aria-expanded="false" aria-controls="faqCollapse15">
-            15. Is my payment information secure?
-          </button>
-        </h2>
-        <div id="faqCollapse15" class="accordion-collapse collapse" aria-labelledby="faqHeading15" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Payments are processed securely by payment providers. We do not store raw card data on servers.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">15. Is my payment information secure?</button>
+        <div class="faqanswer">
+          Payments are processed securely by trusted payment providers. Card details are not stored.
         </div>
       </div>
 
-      <!-- FAQ 16 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading16">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse16" aria-expanded="false" aria-controls="faqCollapse16">
-            16. How do I get a VAT / tax invoice?
-          </button>
-        </h2>
-        <div id="faqCollapse16" class="accordion-collapse collapse" aria-labelledby="faqHeading16" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Contact the organizer or check your order confirmation for invoice options. Policies vary by organizer and region.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">16. How do I get a tax or invoice receipt?</button>
+        <div class="faqanswer">
+          Check your order confirmation or contact the organizer for invoice details.
         </div>
       </div>
 
-      <!-- FAQ 17 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading17">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse17" aria-expanded="false" aria-controls="faqCollapse17">
-            17. How do I update my event location or time?
-          </button>
-        </h2>
-        <div id="faqCollapse17" class="accordion-collapse collapse" aria-labelledby="faqHeading17" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Edit the event details in your organizer dashboard and notify ticket holders of changes.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">17. How do I update my event location or time?</button>
+        <div class="faqanswer">
+          Edit the event details from your dashboard and notify ticket holders of the changes.
         </div>
       </div>
 
-      <!-- FAQ 18 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading18">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse18" aria-expanded="false" aria-controls="faqCollapse18">
-            18. What happens if an event is canceled?
-          </button>
-        </h2>
-        <div id="faqCollapse18" class="accordion-collapse collapse" aria-labelledby="faqHeading18" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Organizers decide refunds or credits. Check event page or contact the organizer for cancellation policy.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">18. What happens if an event is canceled?</button>
+        <div class="faqanswer">
+          The organizer decides refunds or credits. Check the event page for cancellation policy.
         </div>
       </div>
 
-      <!-- FAQ 19 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading19">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse19" aria-expanded="false" aria-controls="faqCollapse19">
-            19. Are events accessible for people with disabilities?
-          </button>
-        </h2>
-        <div id="faqCollapse19" class="accordion-collapse collapse" aria-labelledby="faqHeading19" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Accessibility information is provided by the organizer on the event page. Contact the organizer for specific needs.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">19. Are events accessible for people with disabilities?</button>
+        <div class="faqanswer">
+          Accessibility information is provided by the organizer. Contact them for specific needs.
         </div>
       </div>
 
-      <!-- FAQ 20 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading20">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse20" aria-expanded="false" aria-controls="faqCollapse20">
-            20. Where can I get more help?
-          </button>
-        </h2>
-        <div id="faqCollapse20" class="accordion-collapse collapse" aria-labelledby="faqHeading20" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Use the Support link in Help Center or email the organizer. You can also return to the home page using the Back button.
-          </div>
+      <div class="faqitem">
+        <button class="faqquestion">20. Where can I get more help?</button>
+        <div class="faqanswer">
+          Use the support section or contact the event organizer for further assistance.
         </div>
       </div>
+
 
     </div>
-    <!-- accordion end -->
 
-    <!-- small footer link -->
-    <div style="text-align:center; margin-top:24px; color:var(--muted)">
-      <small>Still need help? Contact the event organizer or use the Support link on the main site.</small>
-    </div>
+    <p class="footertext">
+      Still need help? Contact the organizer or support team.
+    </p>
+
   </main>
 
-  <!-- BOOTSTRAP JS (used for accordion collapse behavior) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Optional small script: search and auto-back focus -->
   <script>
-    // 1) FAQ search: filter accordion by question text
-    const faqSearch = document.getElementById('faqSearch');
-    faqSearch.addEventListener('keydown', function(e){
-      // Enter key triggers search
-      if(e.key === 'Enter'){
-        e.preventDefault();
-        const q = faqSearch.value.trim().toLowerCase();
-        document.querySelectorAll('#faqAccordion .accordion-item').forEach(item => {
+    // ACCORDION LOGIC
+    const questions = document.querySelectorAll(".faqquestion");
+
+    questions.forEach(q => {
+      q.addEventListener("click", () => {
+        const item = q.parentElement;
+
+        document.querySelectorAll(".faqitem").forEach(faq => {
+          if (faq !== item) {
+            faq.classList.remove("active");
+          }
+        });
+
+        item.classList.toggle("active");
+      });
+    });
+
+    // SEARCH LOGIC
+    const search = document.getElementById("faqsearch");
+
+    search.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const value = search.value.toLowerCase();
+
+        document.querySelectorAll(".faqitem").forEach(item => {
           const text = item.innerText.toLowerCase();
-          item.style.display = text.includes(q) ? 'block' : 'none';
+          item.style.display = text.includes(value) ? "block" : "none";
         });
       }
     });
 
-    // 2) If user clicks Back to Home link, browser will return to index.html
-    // That is already an anchor <a href="index.html"> so nothing else needed.
   </script>
 </body>
 </html>
