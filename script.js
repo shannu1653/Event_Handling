@@ -6,7 +6,8 @@
    API CONFIG (ADDED)
 ------------------------- */
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
-const MEDIA_BASE = "https://aiven-deploye.onrender.com/media/";
+const MEDIA_BASE = "https://aiven-deploye.onrender.com";
+
 
 
 /* -------------------------
