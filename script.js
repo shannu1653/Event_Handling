@@ -93,7 +93,7 @@ function getUserLocation() {
 }
 
 /* -------------------------
-   MODALS
+   MODALSs
 ------------------------- */
 let editingEventId = null;
 
