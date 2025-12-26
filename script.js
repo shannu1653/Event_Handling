@@ -4,6 +4,7 @@
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
 const MEDIA_BASE = "https://aiven-deploye.onrender.com";
 
+<<<<<<< HEAD
 /* =================================================
    GET HTML ELEMENTS
    ================================================= */
@@ -16,6 +17,8 @@ const loader = document.getElementById("loader");
 
 let editingEventId = null;   // track edit mode
 let allEvents = [];         // store events list (important)
+=======
+>>>>>>> 834f783ee741fb1537402f80c296c20c62a49a02
 
 
 viewEventImage.src =
@@ -81,6 +84,7 @@ async function loadEvents() {
 
     allEvents.forEach(event => {
 
+<<<<<<< HEAD
       // FIX IMAGE URL
       const imageUrl = event.image
         ? (event.image.startsWith("http")
@@ -99,6 +103,24 @@ async function loadEvents() {
           </div>
         </div>
       `;
+=======
+        col.innerHTML = `
+            <div class="eventCard" data-category="${ev.category}">
+                <img src="${ev.image ? MEDIA_BASE + ev.image : 'https://via.placeholder.com/300x180?text=No+Image'}" class="eventImg">
+                <div class="eventInfo">
+                    <h5 class="eventTitle">${ev.title}</h5>
+                    <p class="eventDate">${ev.date}</p>
+                    <p class="eventPrice">${ev.price}</p>
+                    <div class="d-flex gap-2 p-2">
+                        <button class="btn btn-primary btn-sm" onclick="viewEvent(${idx})">View</button>
+                        <button class="btn btn-warning btn-sm" onclick="editEvent(${idx})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})">Delete</button>
+                        <button class="btn btn-success btn-sm" onclick="buyTicket(${idx}, 'dynamic')">Buy</button>
+                    </div>
+                </div>
+            </div>`;
+        eventsContainer.appendChild(col);
+>>>>>>> 834f783ee741fb1537402f80c296c20c62a49a02
     });
 
   } catch (error) {
