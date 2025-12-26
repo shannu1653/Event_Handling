@@ -1,59 +1,36 @@
 /* =================================================
-   BASE URLS (DEPLOYED) 
+   BASE URLS (DEPLOYED)
    ================================================= */
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
-const MEDIA_BASE = "https://aiven-deploye.onrender.com";
+const MEDIA_BASE = "https://aiven-deploye.onrender.com/media/";
 
-<<<<<<< HEAD
 /* =================================================
-   GET HTML ELEMENTS
+   DOM ELEMENTS
    ================================================= */
 const eventsContainer = document.getElementById("eventsContainer");
 const eventModal = document.getElementById("eventModal");
 const overlay = document.getElementById("overlay");
+const closeModal = document.getElementById("closeModal");
 const eventForm = document.getElementById("eventForm");
-const imagePreview = document.getElementById("preview");
+const imagePreview = document.getElementById("imagePreview");
 const loader = document.getElementById("loader");
 
-let editingEventId = null;   // track edit mode
-let allEvents = [];         // store events list (important)
-=======
->>>>>>> 834f783ee741fb1537402f80c296c20c62a49a02
+let allEvents = [];
+let editingEventId = null;
 
-
-viewEventImage.src =
-  ev.image && ev.image.startsWith('/media')
-    ? MEDIA_BASE + ev.image
-    : 'https://via.placeholder.com/600x350?text=No+Image';
-
-    eventImagePreview.src =
-  ev.image && ev.image.startsWith('/media')
-    ? MEDIA_BASE + ev.image
-    : 'https://via.placeholder.com/400x250?text=No+Image';
-
- 
 /* =================================================
-   LOADER FUNCTIONS
+   LOADER
    ================================================= */
 function showLoader() {
   loader.style.display = "flex";
 }
-
 function hideLoader() {
   loader.style.display = "none";
 }
 
 /* =================================================
-   OPEN & CLOSE MODAL
+   MODAL CONTROLS
    ================================================= */
-openCreateEvent.onclick = () => {
-  eventModal.style.display = "block";
-  overlay.style.display = "block";
-};
-
-closeModal.onclick = closeModalBox;
-overlay.onclick = closeModalBox;
-
 function closeModalBox() {
   eventModal.style.display = "none";
   overlay.style.display = "none";
@@ -61,6 +38,9 @@ function closeModalBox() {
   imagePreview.style.display = "none";
   editingEventId = null;
 }
+
+closeModal.onclick = closeModalBox;
+overlay.onclick = closeModalBox;
 
 /* =================================================
    IMAGE PREVIEW (BEFORE UPLOAD)
@@ -71,67 +51,47 @@ image.onchange = () => {
 };
 
 /* =================================================
-   LOAD EVENTS (GET ALL EVENTS)
+   LOAD EVENTS (FIXED IMAGE LOGIC)
    ================================================= */
 async function loadEvents() {
   showLoader();
 
   try {
-    const response = await fetch(`${API_BASE}/events/`);
-    allEvents = await response.json();
+    const res = await fetch(`${API_BASE}/events/`);
+    allEvents = await res.json();
 
     eventsContainer.innerHTML = "";
 
-    allEvents.forEach(event => {
-
-<<<<<<< HEAD
-      // FIX IMAGE URL
-      const imageUrl = event.image
-        ? (event.image.startsWith("http")
-            ? event.image
-            : MEDIA_BASE + event.image)
-        : "https://via.placeholder.com/400x200?text=No+Image";
+    allEvents.forEach(ev => {
+      const imageUrl = ev.image
+        ? MEDIA_BASE + ev.image   // ✅ CORRECT FIX
+        : "https://via.placeholder.com/400x250?text=No+Image";
 
       eventsContainer.innerHTML += `
-        <div class="card">
-          <img src="${imageUrl}" alt="Event Image">
-          <div class="cardbody">
-            <h4>${event.title}</h4>
-            <p>${event.place} | ₹${event.price}</p>
-            <button onclick="editEvent(${event.id})">Edit</button>
-            <button onclick="deleteEvent(${event.id})">Delete</button>
+        <div class="eventCard">
+          <img src="${imageUrl}" class="eventImg" alt="Event Image">
+          <div class="eventInfo">
+            <h5>${ev.title}</h5>
+            <p>${ev.date}</p>
+            <p>₹${ev.price}</p>
+            <div class="actions">
+              <button onclick="editEvent(${ev.id})">Edit</button>
+              <button onclick="deleteEvent(${ev.id})">Delete</button>
+            </div>
           </div>
         </div>
       `;
-=======
-        col.innerHTML = `
-            <div class="eventCard" data-category="${ev.category}">
-                <img src="${ev.image ? MEDIA_BASE + ev.image : 'https://via.placeholder.com/300x180?text=No+Image'}" class="eventImg">
-                <div class="eventInfo">
-                    <h5 class="eventTitle">${ev.title}</h5>
-                    <p class="eventDate">${ev.date}</p>
-                    <p class="eventPrice">${ev.price}</p>
-                    <div class="d-flex gap-2 p-2">
-                        <button class="btn btn-primary btn-sm" onclick="viewEvent(${idx})">View</button>
-                        <button class="btn btn-warning btn-sm" onclick="editEvent(${idx})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})">Delete</button>
-                        <button class="btn btn-success btn-sm" onclick="buyTicket(${idx}, 'dynamic')">Buy</button>
-                    </div>
-                </div>
-            </div>`;
-        eventsContainer.appendChild(col);
->>>>>>> 834f783ee741fb1537402f80c296c20c62a49a02
     });
 
-  } catch (error) {
-    alert("Failed to load events");
+  } catch (err) {
+    alert("❌ Failed to load events");
   }
 
   hideLoader();
 }
 
 /* =================================================
-   CREATE OR UPDATE EVENT
+   CREATE / UPDATE EVENT
    ================================================= */
 eventForm.onsubmit = async (e) => {
   e.preventDefault();
@@ -141,13 +101,11 @@ eventForm.onsubmit = async (e) => {
 
   try {
     if (editingEventId === null) {
-      // CREATE EVENT
       await fetch(`${API_BASE}/create-event/`, {
         method: "POST",
         body: formData
       });
     } else {
-      // UPDATE EVENT
       await fetch(`${API_BASE}/update-event/${editingEventId}/`, {
         method: "PUT",
         body: formData
@@ -157,41 +115,31 @@ eventForm.onsubmit = async (e) => {
     closeModalBox();
     loadEvents();
 
-  } catch (error) {
-    alert("Failed to save event");
-    hideLoader();
+  } catch (err) {
+    alert("❌ Failed to save event");
   }
+
+  hideLoader();
 };
 
 /* =================================================
-   EDIT EVENT (NO EXTRA API CALL)
+   EDIT EVENT
    ================================================= */
 function editEvent(id) {
+  const ev = allEvents.find(e => e.id === id);
+  if (!ev) return;
 
-  const event = allEvents.find(e => e.id === id);
+  title.value = ev.title;
+  date.value = ev.date;
+  price.value = ev.price;
+  description.value = ev.description;
 
-  if (!event) {
-    alert("Event not found");
-    return;
-  }
-
-  // Fill form
-  title.value = event.title;
-  date.value = event.date;
-  price.value = event.price;
-  place.value = event.place;
-  description.value = event.description;
-
-  // Show existing image
-  if (event.image) {
-    imagePreview.src = event.image.startsWith("http")
-      ? event.image
-      : MEDIA_BASE + event.image;
+  if (ev.image) {
+    imagePreview.src = MEDIA_BASE + ev.image;
     imagePreview.style.display = "block";
   }
 
   editingEventId = id;
-
   eventModal.style.display = "block";
   overlay.style.display = "block";
 }
@@ -200,24 +148,21 @@ function editEvent(id) {
    DELETE EVENT
    ================================================= */
 async function deleteEvent(id) {
-  if (!confirm("Are you sure you want to delete this event?")) return;
+  if (!confirm("Delete this event?")) return;
 
   showLoader();
-
   try {
     await fetch(`${API_BASE}/delete-event/${id}/`, {
       method: "DELETE"
     });
-
     loadEvents();
-
-  } catch (error) {
-    alert("Failed to delete event");
-    hideLoader();
+  } catch {
+    alert("❌ Failed to delete event");
   }
+  hideLoader();
 }
 
 /* =================================================
-   INITIAL LOAD
+   INIT
    ================================================= */
 loadEvents();
