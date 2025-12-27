@@ -275,15 +275,14 @@ function login() {
       password: document.getElementById("password").value
     })
   })
-  .then(async res => {
-    const data = await res.json().catch(() => ({}));
-
+  .then(res => res.json())
+  .then(data => {
     loader.style.display = "none";
     btn.disabled = false;
     btn.innerText = "Login";
 
-    // ✅ SUCCESS CONDITION (CORRECT)
-    if (res.ok && !data.error) {
+    // ✅ MATCH BACKEND RESPONSE
+    if (data.success === true) {
       localStorage.setItem("loggedIn", "true");
 
       showPopup("Login Successful 🎉", "success");
@@ -291,24 +290,17 @@ function login() {
       setTimeout(() => {
         window.location.href = "index.html";
       }, 1200);
-    }
-    // ❌ FAILURE
-    else {
-      showPopup(
-        data.error || data.message || "Invalid Username or Password ❌",
-        "error"
-      );
+    } else {
+      showPopup("Invalid Username or Password ❌", "error");
     }
   })
   .catch(() => {
     loader.style.display = "none";
     btn.disabled = false;
     btn.innerText = "Login";
-    showPopup("Server not reachable ⚠️", "error");
+    showPopup("Backend not reachable ⚠️", "error");
   });
 }
-
-
 
 
 </script>
