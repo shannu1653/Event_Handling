@@ -6,7 +6,7 @@
    API CONFIG (FIXED)
 ------------------------- */
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
-const MEDIA_BASE = "https://aiven-deploye.onrender.com/media/";
+
 
 /* -------------------------
    DOM ELEMENTS
@@ -190,8 +190,8 @@ async function loadEvents() {
     events.forEach((ev, idx) => {
 
         const imageUrl = ev.image
-            ? MEDIA_BASE + ev.image
-            : "https://via.placeholder.com/300x180?text=No+Image";
+        ? ev.image
+        : "https://via.placeholder.com/300x180?text=No+Image";
 
         const col = document.createElement("div");
         col.className = "col-12 col-sm-6 col-md-4 col-lg-3 dynamicEventCard";
@@ -224,7 +224,7 @@ async function loadEvents() {
 function viewEvent(index) {
     const ev = window.backendEvents[index];
     viewEventTitle.innerText = ev.title;
-    viewEventImage.src = ev.image ? MEDIA_BASE + ev.image : "";
+    viewEventImage.src = ev.image || "";
     viewEventDate.innerText = ev.date;
     viewEventPrice.innerText = ev.price;
     viewEventCategory.innerText = ev.category;
@@ -246,7 +246,7 @@ function editEvent(index) {
     eventDescriptionInput.value = ev.description;
 
     if (ev.image) {
-        eventImagePreview.src = MEDIA_BASE + ev.image;
+        eventImagePreview.src = ev.image;
         eventImagePreview.style.display = "block";
     }
 
@@ -274,7 +274,7 @@ function buyTicket(index) {
         title: ev.title,
         date: ev.date,
         price: Number(ev.price),
-        image: ev.image ? MEDIA_BASE + ev.image : "",
+        image: ev.image || "",
         ticketId: "TID-" + Date.now()
     });
 
