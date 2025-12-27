@@ -265,37 +265,39 @@ function login() {
   btn.disabled = true;
   btn.innerText = "Logging in...";
 
-  fetch("https://aiven-deploye.onrender.com/api/login/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value
-    })
+  
+ fetch("https://aiven-deploye.onrender.com/api2/login/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    username: document.getElementById("username").value,
+    password: document.getElementById("password").value
   })
-  .then(res => res.json())
-  .then(data => {
-    loader.style.display = "none";
-    btn.disabled = false;
-    btn.innerText = "Login";
+})
+.then(async res => {
+  const data = await res.json().catch(() => ({}));
 
-    if (data.success) {
-      localStorage.setItem("loggedIn", "true");
-      showPopup("Login Successful 🎉", "success");
+  loader.style.display = "none";
+  btn.disabled = false;
+  btn.innerText = "Login";
 
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1500);
-    } else {
-      showPopup("Invalid Username or Password ❌", "error");
-    }
-  })
-  .catch(() => {
-    loader.style.display = "none";
-    btn.disabled = false;
-    btn.innerText = "Login";
-    showPopup("Server not reachable ⚠️", "error");
-  });
+  if (res.ok && data.success) {
+    localStorage.setItem("loggedIn", "true");
+    showPopup("Login Successful 🎉", "success");
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1500);
+  } else {
+    showPopup(data.message || "Invalid Username or Password ❌", "error");
+  }
+})
+.catch(() => {
+  loader.style.display = "none";
+  btn.disabled = false;
+  btn.innerText = "Login";
+  showPopup("Server not reachable ⚠️", "error");
+});
 }
 </script>
 
