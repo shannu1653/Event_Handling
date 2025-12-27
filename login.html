@@ -285,13 +285,13 @@ function login() {
     if (data.success) {
       localStorage.setItem("loggedIn", "true");
 
-      showPopup(data.success,"Login Successful 🎉", "success");
+      showPopup("Login Successful 🎉", "success");
 
       setTimeout(() => {
         window.location.href = "index.html";
       }, 2200);
     } else {
-      showPopup(data.message,"Invalid Username or Password ❌", "error");
+      showPopup("Invalid Username or Password ❌", "error");
     }
   })
   .catch(() => {
