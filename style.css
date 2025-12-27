@@ -9,6 +9,13 @@
   height: auto;
 }
 
+.eventImg {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
 :root{
   --accent:#ff5a2d;
   --muted:#f4f6fb;

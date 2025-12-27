@@ -1,6 +1,7 @@
 /* ===========================================================
    script.js — Premium Eventbrite Clone (FINAL STABLE VERSION)
 =========================================================== */
+const FALLBACK_IMAGE = "https://i.ibb.co/ZJ7Vhgf/event1.png";
 
 function safeImage(url) {
   if (!url) return null;
@@ -222,26 +223,20 @@ async function loadEvents() {
     const events = await res.json();
 
     events.forEach((ev, idx) => {
-        const imageUrl = ev.image
-            ? safeImage(ev.image)
-            : "https://via.placeholder.com/300x180?text=No+Image";
-
+        const imageUrl = ev.image ? safeImage(ev.image) : FALLBACK_IMAGE;
 
         const col = document.createElement("div");
         col.className = "col-12 col-sm-6 col-md-4 col-lg-3 dynamicEventCard";
 
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
-                <img 
-  src="${imageUrl}?cb=${Date.now()}"
+                <img
+  src="${imageUrl}"
   class="eventImg"
   loading="lazy"
   referrerpolicy="no-referrer"
-  onerror="this.onerror=null;this.src='https://via.placeholder.com/300x180?text=Image+Error';"
+  onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';"
 />
-
-
-
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
                     <p class="eventDate">${ev.date}</p>
@@ -270,8 +265,7 @@ function viewEvent(index) {
     const ev = window.backendEvents[index];
 
     viewEventTitle.innerText = ev.title;
-    viewEventImage.src =
-    ev.image || "https://via.placeholder.com/600x350?text=No+Image";
+    viewEventImage.src = ev.image ? safeImage(ev.image) : FALLBACK_IMAGE;
     viewEventDate.innerText = ev.date;
     viewEventPrice.innerText = ev.price;
     viewEventCategory.innerText = ev.category;
@@ -294,7 +288,8 @@ function editEvent(index) {
     eventDescriptionInput.value = ev.description;
 
     if (ev.image) {
-        eventImagePreview.src = ev.image;
+       eventImagePreview.src = safeImage(ev.image);
+
         eventImagePreview.style.display = "block";
     }
 
