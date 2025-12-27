@@ -1,12 +1,11 @@
 /* ===========================================================
-   script.js — Premium Eventbrite Clone (FIXED + BACKEND)
+   script.js — Premium Eventbrite Clone (FINAL FIXED)
 =========================================================== */
 
 /* -------------------------
-   API CONFIG (FIXED)
+   API CONFIG
 ------------------------- */
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
-
 
 /* -------------------------
    DOM ELEMENTS
@@ -47,10 +46,12 @@ const searchFilter = document.getElementById('searchFilter');
 const mainSearch = document.getElementById('mainSearch');
 
 /* helpers */
-function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+function qsa(sel) {
+    return Array.from(document.querySelectorAll(sel));
+}
 
 /* -------------------------
-   AUTH
+   AUTH CHECK
 ------------------------- */
 if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
@@ -79,12 +80,6 @@ qsa('#locationDropdown .locItem').forEach(item => {
     });
 });
 
-
-
-
-
-
-
 /* -------------------------
    GEOLOCATION
 ------------------------- */
@@ -99,7 +94,7 @@ function getUserLocation() {
 }
 
 /* -------------------------
-   MODALSs
+   MODALS
 ------------------------- */
 let editingEventId = null;
 
@@ -108,6 +103,7 @@ function showModal(modal, overlay) {
     modal.style.display = 'block';
     setTimeout(() => modal.classList.add('show'), 10);
 }
+
 function hideModal(modal, overlay) {
     modal.classList.remove('show');
     setTimeout(() => {
@@ -122,8 +118,13 @@ openCreateEvent.addEventListener('click', () => {
     resetForm();
     showModal(eventModal, eventModalOverlay);
 });
-closeEventBtn.addEventListener('click', () => hideModal(eventModal, eventModalOverlay));
-eventModalOverlay.addEventListener('click', () => hideModal(eventModal, eventModalOverlay));
+
+closeEventBtn.addEventListener('click', () =>
+    hideModal(eventModal, eventModalOverlay)
+);
+eventModalOverlay.addEventListener('click', () =>
+    hideModal(eventModal, eventModalOverlay)
+);
 
 function resetForm() {
     eventTitleInput.value = "";
@@ -136,7 +137,7 @@ function resetForm() {
 }
 
 /* -------------------------
-   IMAGE PREVIEW
+   IMAGE PREVIEW (LOCAL)
 ------------------------- */
 eventImageInput.addEventListener("change", function () {
     const reader = new FileReader();
@@ -148,7 +149,7 @@ eventImageInput.addEventListener("change", function () {
 });
 
 /* -------------------------
-   SAVE EVENT
+   SAVE EVENT (CREATE / UPDATE)
 ------------------------- */
 saveEventBtn.addEventListener('click', async () => {
 
@@ -172,13 +173,17 @@ saveEventBtn.addEventListener('click', async () => {
         ? `${API_BASE}/create-event/`
         : `${API_BASE}/update-event/${editingEventId}/`;
 
-    await fetch(url, { method: "POST", body: formData });
+    await fetch(url, {
+        method: "POST",
+        body: formData
+    });
+
     hideModal(eventModal, eventModalOverlay);
     loadEvents();
 });
 
 /* -------------------------
-   LOAD EVENTS (FIXED IMAGE)
+   LOAD EVENTS (FIXED)
 ------------------------- */
 async function loadEvents() {
 
@@ -190,8 +195,8 @@ async function loadEvents() {
     events.forEach((ev, idx) => {
 
         const imageUrl = ev.image
-        ? ev.image
-        : "https://via.placeholder.com/300x180?text=No+Image";
+            ? ev.image
+            : "https://via.placeholder.com/300x180?text=No+Image";
 
         const col = document.createElement("div");
         col.className = "col-12 col-sm-6 col-md-4 col-lg-3 dynamicEventCard";
@@ -210,7 +215,9 @@ async function loadEvents() {
                         <button class="btn btn-success btn-sm" onclick="buyTicket(${idx})">Buy</button>
                     </div>
                 </div>
-            </div>`;
+            </div>
+        `;
+
         eventsContainer.appendChild(col);
     });
 
@@ -224,7 +231,7 @@ async function loadEvents() {
 function viewEvent(index) {
     const ev = window.backendEvents[index];
     viewEventTitle.innerText = ev.title;
-    viewEventImage.src = ev.image || "";
+    viewEventImage.src = ev.image || "https://via.placeholder.com/600x350?text=No+Image";
     viewEventDate.innerText = ev.date;
     viewEventPrice.innerText = ev.price;
     viewEventCategory.innerText = ev.category;
@@ -291,12 +298,19 @@ mainSearch.addEventListener("input", e => {
     searchFilter.value = e.target.value;
     filterEvents();
 });
+
 function filterEvents() {
     const cat = categoryFilter.value;
     const search = searchFilter.value.toLowerCase();
+
     qsa(".eventCard").forEach(card => {
         const okCat = cat === "All" || card.dataset.category === cat;
-        const okSearch = card.querySelector(".eventTitle").innerText.toLowerCase().includes(search);
+        const okSearch = card
+            .querySelector(".eventTitle")
+            .innerText
+            .toLowerCase()
+            .includes(search);
+
         card.parentElement.style.display = okCat && okSearch ? "block" : "none";
     });
 }
