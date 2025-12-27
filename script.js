@@ -11,10 +11,7 @@ const API_BASE = "https://aiven-deploye.onrender.com/api2";
 /* -------------------------
    IMAGE SAFETY
 ------------------------- */
-function safeImage(url) {
-    if (!url || typeof url !== "string") return FALLBACK_IMAGE;
-    return url; // DO NOT modify Cloudinary URLs
-}
+
 
 /* -------------------------
    DOM ELEMENTS
@@ -203,25 +200,33 @@ saveEventBtn.addEventListener("click", async () => {
 /* -------------------------
    LOAD EVENTS
 ------------------------- */
+/* -------------------------
+   LOAD EVENTS (FINAL FIXED)
+------------------------- */
 async function loadEvents() {
     eventsContainer.innerHTML = "";
 
     const res = await fetch(`${API_BASE}/events/`);
     const events = await res.json();
+
+    // store globally for view/edit
     window.backendEvents = events;
 
     events.forEach((ev, idx) => {
+
+        // ✅ USE IMAGE URL ONLY IF IT IS ABSOLUTE
+        const imageUrl =
+            ev.image && ev.image.startsWith("http")
+                ? ev.image
+                : FALLBACK_IMAGE;
+
         const col = document.createElement("div");
         col.className = "col-12 col-sm-6 col-md-4 col-lg-3";
 
+        // ⚠️ DO NOT PUT src DIRECTLY IN HTML
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
-                <img
-                    src="${safeImage(ev.image)}"
-                    class="eventImg"
-                    loading="lazy"
-                    onerror="this.src='${FALLBACK_IMAGE}'"
-                />
+                <img class="eventImg" loading="lazy" />
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
                     <p class="eventDate">${ev.date}</p>
@@ -235,11 +240,20 @@ async function loadEvents() {
                 </div>
             </div>
         `;
+
         eventsContainer.appendChild(col);
+
+        // ✅ SET IMAGE SRC SAFELY
+        const img = col.querySelector(".eventImg");
+        img.src = imageUrl;
+        img.onerror = () => {
+            img.src = FALLBACK_IMAGE;
+        };
     });
 
     filterEvents();
 }
+
 
 /* -------------------------
    VIEW EVENT
