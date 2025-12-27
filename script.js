@@ -2,6 +2,12 @@
    script.js — Premium Eventbrite Clone (FINAL STABLE VERSION)
 =========================================================== */
 
+function safeImage(url) {
+  if (!url) return null;
+  return url.startsWith("https://") ? url : url.replace("http://", "https://");
+}
+
+
 /* -------------------------
    API CONFIG
 ------------------------- */
@@ -217,8 +223,9 @@ async function loadEvents() {
 
     events.forEach((ev, idx) => {
         const imageUrl = ev.image
-            ? ev.image
+            ? safeImage(ev.image)
             : "https://via.placeholder.com/300x180?text=No+Image";
+
 
         const col = document.createElement("div");
         col.className = "col-12 col-sm-6 col-md-4 col-lg-3 dynamicEventCard";
@@ -226,11 +233,13 @@ async function loadEvents() {
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
                 <img 
-                        src="${imageUrl}?v=${Date.now()}" 
-                        class="eventImg"
-                        alt="event image"
-                        onerror="this.src='https://via.placeholder.com/300x180?text=Image+Error'"
-                        >
+                    src="${imageUrl.replace('/upload/', '/upload/f_auto,q_auto/')}&cb=${Date.now()}"
+                    class="eventImg"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/300x180?text=Image+Error';"
+                    />
+
 
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
