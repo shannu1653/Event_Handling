@@ -225,7 +225,13 @@ async function loadEvents() {
 
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
-                <img src="${imageUrl}" class="eventImg" alt="event image">
+                <img 
+                        src="${imageUrl}?v=${Date.now()}" 
+                        class="eventImg"
+                        alt="event image"
+                        onerror="this.src='https://via.placeholder.com/300x180?text=Image+Error'"
+                        >
+
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
                     <p class="eventDate">${ev.date}</p>
