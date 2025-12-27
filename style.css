@@ -3,6 +3,12 @@
    camelCase class names only
    ========================= */
 
+   img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 :root{
   --accent:#ff5a2d;
   --muted:#f4f6fb;
