@@ -258,6 +258,7 @@ function closePopup() {
 }
 
 
+
 function login() {
   const loader = document.getElementById("loader");
   const btn = document.getElementById("loginBtn");
@@ -281,18 +282,17 @@ function login() {
     btn.disabled = false;
     btn.innerText = "Login";
 
-    // ✅ SUCCESS ONLY IF TOKEN EXISTS
-    if (data.token) {
+    // ✅ SUCCESS CONDITION (CORRECT)
+    if (res.ok && !data.error) {
       localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("token", data.token);
 
       showPopup("Login Successful 🎉", "success");
 
       setTimeout(() => {
         window.location.href = "index.html";
       }, 1200);
-    } 
-    // ❌ WRONG CREDENTIALS
+    }
+    // ❌ FAILURE
     else {
       showPopup(
         data.error || data.message || "Invalid Username or Password ❌",
@@ -307,6 +307,7 @@ function login() {
     showPopup("Server not reachable ⚠️", "error");
   });
 }
+
 
 
 
