@@ -8,6 +8,11 @@
   max-width: 100%;
   height: auto;
 }
+.dark {
+  background: #111;
+  color: #fff;
+}
+
 
 .eventImg {
   width: 100%;

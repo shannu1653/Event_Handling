@@ -110,7 +110,10 @@
                             Sign Up
                         </a>
                     </li>
-                    <button onclick="logout()">Logout</button>
+                    <li class="nav-item px-3">
+                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">Logout</button>
+                    </li>
+
 
 
                 </ul>
@@ -134,11 +137,8 @@
 
             <div class="carousel-item active">
                 <div class="heroSlideWrapper">
-                    <img
-  class="heroImg"
-  src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
-  alt="Event banner"
-  loading="lazy">
+                    <img class="heroImg" src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
+                        alt="Event banner" loading="lazy">
 
                     <div class="heroContent">
                         <h1 class="heroTitle">THIS HOLIDAY SEASON</h1>
@@ -150,11 +150,8 @@
 
             <div class="carousel-item">
                 <div class="heroSlideWrapper">
-                    <img
-  class="heroImg"
-  src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
-  alt="Event banner"
-  loading="lazy">
+                    <img class="heroImg" src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
+                        alt="Event banner" loading="lazy">
 
                     <div class="heroContent">
                         <h1 class="heroTitle">EXPERIENCE EVENTS</h1>
@@ -166,11 +163,8 @@
 
             <div class="carousel-item">
                 <div class="heroSlideWrapper">
-                   <img
-  class="heroImg"
-  src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
-  alt="Event banner"
-  loading="lazy">
+                    <img class="heroImg" src="https://images.pexels.com/photos/5728971/pexels-photo-5728971.jpeg"
+                        alt="Event banner" loading="lazy">
 
                     <div class="heroContent">
                         <h1 class="heroTitle">FIND YOUR NEXT</h1>
@@ -269,64 +263,7 @@
 
         <div id="eventsContainer" class="row g-4">
 
-            <!-- ----------------------------------------------------
-                 STATIC EVENT CARD 1
-            ----------------------------------------------------- -->
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="eventCard" data-category="Business">
-
-                    <img src="https://i.ibb.co/ZJ7Vhgf/event1.png" class="eventImg">
-
-                    <div class="eventInfo">
-                        <h5 class="eventTitle">Meditation Class & Career Empowerment</h5>
-                        <p class="eventDate">Wed, Apr 15 • 9:00 PM</p>
-                        <p class="eventPrice">From $3.00</p>
-
-                        <div class="actionRow d-flex gap-2">
-                            <button class="btn btn-primary btn-sm viewBtn">View</button>
-                            <button class="btn btn-warning btn-sm editBtn">Edit</button>
-                            <button class="btn btn-danger btn-sm deleteBtn">Delete</button>
-
-                            <!-- ⭐ STATIC BUY BUTTON ⭐ -->
-                            <button class="btn btn-success btn-sm buyBtn staticBuyBtn">Buy</button>
-
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- ----------------------------------------------------
-                 STATIC EVENT CARD 2
-            ----------------------------------------------------- -->
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="eventCard" data-category="Business">
-
-                    <img src="https://i.ibb.co/MkbjPBQ/event2.png" class="eventImg">
-
-                    <div class="eventInfo">
-                        <h5 class="eventTitle">Masterclass on Financial Freedom</h5>
-                        <p class="eventDate">Saturday • 2:00 PM</p>
-                        <p class="eventPrice">Free</p>
-
-                        <div class="actionRow d-flex gap-2">
-                            <button class="btn btn-primary btn-sm viewBtn">View</button>
-                            <button class="btn btn-warning btn-sm editBtn">Edit</button>
-                            <button class="btn btn-danger btn-sm deleteBtn">Delete</button>
-
-                            <!-- ⭐ STATIC BUY BUTTON ⭐ -->
-                            <button class="btn btn-success btn-sm buyBtn staticBuyBtn">Buy</button>
-
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
             <!-- JS will append dynamic event cards below -->
-
         </div>
     </section>
 
@@ -407,7 +344,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- CUSTOM JS -->
-    <script src="./script.js"></script>
+    <script src="./script.js" defer></script>
+
 
 </body>
 

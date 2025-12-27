@@ -1,18 +1,20 @@
 /* ===========================================================
-   script.js — Premium Eventbrite Clone (FINAL STABLE VERSION)
+   script.js — Premium Eventbrite Clone (FINAL PRODUCTION VERSION)
 =========================================================== */
-const FALLBACK_IMAGE = "https://i.ibb.co/ZJ7Vhgf/event1.png";
-
-function safeImage(url) {
-  if (!url) return null;
-  return url.startsWith("https://") ? url : url.replace("http://", "https://");
-}
-
 
 /* -------------------------
-   API CONFIG
+   CONSTANTS
 ------------------------- */
+const FALLBACK_IMAGE = "https://i.ibb.co/ZJ7Vhgf/event1.png";
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
+
+/* -------------------------
+   IMAGE SAFETY
+------------------------- */
+function safeImage(url) {
+    if (!url || typeof url !== "string") return FALLBACK_IMAGE;
+    return url; // DO NOT modify Cloudinary URLs
+}
 
 /* -------------------------
    DOM ELEMENTS
@@ -106,7 +108,7 @@ function getUserLocation() {
             `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`
         );
         const data = await res.json();
-        locationBtn.innerText = data.address.city || "Your Location";
+        locationBtn.innerText = data.address?.city || "Your Location";
     });
 }
 
@@ -136,21 +138,10 @@ openCreateEvent.addEventListener("click", () => {
     showModal(eventModal, eventModalOverlay);
 });
 
-closeEventBtn.addEventListener("click", () =>
-    hideModal(eventModal, eventModalOverlay)
-);
-
-eventModalOverlay.addEventListener("click", () =>
-    hideModal(eventModal, eventModalOverlay)
-);
-
-closeViewEventBtn.addEventListener("click", () =>
-    hideModal(viewEventModal, viewEventOverlay)
-);
-
-viewEventOverlay.addEventListener("click", () =>
-    hideModal(viewEventModal, viewEventOverlay)
-);
+closeEventBtn.onclick = () => hideModal(eventModal, eventModalOverlay);
+eventModalOverlay.onclick = () => hideModal(eventModal, eventModalOverlay);
+closeViewEventBtn.onclick = () => hideModal(viewEventModal, viewEventOverlay);
+viewEventOverlay.onclick = () => hideModal(viewEventModal, viewEventOverlay);
 
 /* -------------------------
    RESET FORM
@@ -166,7 +157,7 @@ function resetForm() {
 }
 
 /* -------------------------
-   IMAGE PREVIEW (LOCAL)
+   IMAGE PREVIEW
 ------------------------- */
 eventImageInput.addEventListener("change", function () {
     if (!this.files[0]) return;
@@ -180,7 +171,7 @@ eventImageInput.addEventListener("change", function () {
 });
 
 /* -------------------------
-   SAVE EVENT (CREATE / UPDATE)
+   SAVE EVENT
 ------------------------- */
 saveEventBtn.addEventListener("click", async () => {
     if (!eventTitleInput.value || !eventDateInput.value) {
@@ -199,44 +190,38 @@ saveEventBtn.addEventListener("click", async () => {
         formData.append("image", eventImageInput.files[0]);
     }
 
-    const url =
-        editingEventId === null
-            ? `${API_BASE}/create-event/`
-            : `${API_BASE}/update-event/${editingEventId}/`;
+    const url = editingEventId === null
+        ? `${API_BASE}/create-event/`
+        : `${API_BASE}/update-event/${editingEventId}/`;
 
-    await fetch(url, {
-        method: "POST",
-        body: formData
-    });
+    await fetch(url, { method: "POST", body: formData });
 
     hideModal(eventModal, eventModalOverlay);
     loadEvents();
 });
 
 /* -------------------------
-   LOAD EVENTS (CLOUDINARY READY)
+   LOAD EVENTS
 ------------------------- */
 async function loadEvents() {
-    qsa(".dynamicEventCard").forEach(el => el.remove());
+    eventsContainer.innerHTML = "";
 
     const res = await fetch(`${API_BASE}/events/`);
     const events = await res.json();
+    window.backendEvents = events;
 
     events.forEach((ev, idx) => {
-        const imageUrl = ev.image ? safeImage(ev.image) : FALLBACK_IMAGE;
-
         const col = document.createElement("div");
-        col.className = "col-12 col-sm-6 col-md-4 col-lg-3 dynamicEventCard";
+        col.className = "col-12 col-sm-6 col-md-4 col-lg-3";
 
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
                 <img
-  src="${imageUrl}"
-  class="eventImg"
-  loading="lazy"
-  referrerpolicy="no-referrer"
-  onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';"
-/>
+                    src="${safeImage(ev.image)}"
+                    class="eventImg"
+                    loading="lazy"
+                    onerror="this.src='${FALLBACK_IMAGE}'"
+                />
                 <div class="eventInfo">
                     <h5 class="eventTitle">${ev.title}</h5>
                     <p class="eventDate">${ev.date}</p>
@@ -250,11 +235,9 @@ async function loadEvents() {
                 </div>
             </div>
         `;
-
         eventsContainer.appendChild(col);
     });
 
-    window.backendEvents = events;
     filterEvents();
 }
 
@@ -265,7 +248,7 @@ function viewEvent(index) {
     const ev = window.backendEvents[index];
 
     viewEventTitle.innerText = ev.title;
-    viewEventImage.src = ev.image ? safeImage(ev.image) : FALLBACK_IMAGE;
+    viewEventImage.src = safeImage(ev.image);
     viewEventDate.innerText = ev.date;
     viewEventPrice.innerText = ev.price;
     viewEventCategory.innerText = ev.category;
@@ -288,8 +271,7 @@ function editEvent(index) {
     eventDescriptionInput.value = ev.description;
 
     if (ev.image) {
-       eventImagePreview.src = safeImage(ev.image);
-
+        eventImagePreview.src = safeImage(ev.image);
         eventImagePreview.style.display = "block";
     }
 
@@ -302,7 +284,6 @@ function editEvent(index) {
 ------------------------- */
 async function deleteEvent(id) {
     if (!confirm("Delete this event?")) return;
-
     await fetch(`${API_BASE}/delete-event/${id}/`);
     loadEvents();
 }
@@ -318,7 +299,7 @@ function buyTicket(index) {
         title: ev.title,
         date: ev.date,
         price: Number(ev.price),
-        image: ev.image || "",
+        image: safeImage(ev.image),
         ticketId: "TID-" + Date.now()
     });
 
@@ -329,12 +310,12 @@ function buyTicket(index) {
 /* -------------------------
    FILTERS
 ------------------------- */
-categoryFilter.addEventListener("change", filterEvents);
-searchFilter.addEventListener("input", filterEvents);
-mainSearch.addEventListener("input", e => {
+categoryFilter.onchange = filterEvents;
+searchFilter.oninput = filterEvents;
+mainSearch.oninput = e => {
     searchFilter.value = e.target.value;
     filterEvents();
-});
+};
 
 function filterEvents() {
     const cat = categoryFilter.value;
@@ -352,7 +333,16 @@ function filterEvents() {
     });
 }
 
+
 /* -------------------------
    INIT
 ------------------------- */
 loadEvents();
+
+
+const themeToggle = document.getElementById("themeToggle");
+if (themeToggle) {
+    themeToggle.onclick = () => {
+        document.body.classList.toggle("dark");
+    };
+}
