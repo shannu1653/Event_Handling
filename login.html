@@ -257,6 +257,7 @@ function closePopup() {
   document.getElementById("popup").style.display = "none";
 }
 
+
 function login() {
   const loader = document.getElementById("loader");
   const btn = document.getElementById("loginBtn");
@@ -280,34 +281,34 @@ function login() {
     btn.disabled = false;
     btn.innerText = "Login";
 
-    // ✅ SUCCESS = HTTP 200
-    if (res.ok) {
+    // ✅ SUCCESS ONLY IF TOKEN EXISTS
+    if (data.token) {
       localStorage.setItem("loggedIn", "true");
-
-      // optional: store token if backend sends it
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
+      localStorage.setItem("token", data.token);
 
       showPopup("Login Successful 🎉", "success");
 
       setTimeout(() => {
         window.location.href = "index.html";
       }, 1200);
-    } else {
+    } 
+    // ❌ WRONG CREDENTIALS
+    else {
       showPopup(
         data.error || data.message || "Invalid Username or Password ❌",
         "error"
       );
     }
   })
-  .catch(err => {
+  .catch(() => {
     loader.style.display = "none";
     btn.disabled = false;
     btn.innerText = "Login";
     showPopup("Server not reachable ⚠️", "error");
   });
 }
+
+
 
 </script>
 
