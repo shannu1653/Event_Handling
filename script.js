@@ -233,12 +233,13 @@ async function loadEvents() {
         col.innerHTML = `
             <div class="eventCard" data-category="${ev.category}">
                 <img 
-                    src="${imageUrl.replace('/upload/', '/upload/f_auto,q_auto/')}&cb=${Date.now()}"
-                    class="eventImg"
-                    loading="lazy"
-                    referrerpolicy="no-referrer"
-                    onerror="this.onerror=null;this.src='https://via.placeholder.com/300x180?text=Image+Error';"
-                    />
+  src="${imageUrl}?cb=${Date.now()}"
+  class="eventImg"
+  loading="lazy"
+  referrerpolicy="no-referrer"
+  onerror="this.onerror=null;this.src='https://via.placeholder.com/300x180?text=Image+Error';"
+/>
+
 
 
                 <div class="eventInfo">
@@ -270,7 +271,7 @@ function viewEvent(index) {
 
     viewEventTitle.innerText = ev.title;
     viewEventImage.src =
-        ev.image || "https://via.placeholder.com/600x350?text=No+Image";
+    ev.image || "https://via.placeholder.com/600x350?text=No+Image";
     viewEventDate.innerText = ev.date;
     viewEventPrice.innerText = ev.price;
     viewEventCategory.innerText = ev.category;
