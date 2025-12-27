@@ -282,16 +282,16 @@ function login() {
     btn.innerText = "Login";
 
     // ✅ MATCH BACKEND RESPONSE
-    if (data.success === true) {
+    if (data.success) {
       localStorage.setItem("loggedIn", "true");
 
-      showPopup("Login Successful 🎉", "success");
+      showPopup(data.success,"Login Successful 🎉", "success");
 
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 1200);
+      }, 2200);
     } else {
-      showPopup("Invalid Username or Password ❌", "error");
+      showPopup(data.message,"Invalid Username or Password ❌", "error");
     }
   })
   .catch(() => {
