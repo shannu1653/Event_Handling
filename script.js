@@ -5,7 +5,6 @@
 /* -------------------------
    CONSTANTS
 ------------------------- */
-const FALLBACK_IMAGE = "https://i.ibb.co/ZJ7Vhgf/event1.png";
 const API_BASE = "https://aiven-deploye.onrender.com/api2";
 
 /* -------------------------
