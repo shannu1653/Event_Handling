@@ -538,7 +538,7 @@ body{
   color: white;
   font-weight: 600;
   opacity: 0;
-  transition: 0.3s;
+  transition: 0.4s;
 }
 
 .eventImageWrap:hover .imageOverlay {
