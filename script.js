@@ -128,6 +128,50 @@ if (!title || !date || !price || !category || !description || !imageUrl) {
     closeModal();
 });
 
+
+
+
+
+// AUTO LOAD DEMO EVENTS (ONLY IF EMPTY)
+if (!localStorage.getItem("events")) {
+  localStorage.setItem("events", JSON.stringify([
+    {
+      title: "Music Night Live",
+      date: "Today 7:00 PM",
+      price: "299",
+      category: "Music",
+      description: "Live concert with DJ and band",
+      image: "https://images.pexels.com/photos/167636/pexels-photo-167636.jpeg"
+    },
+    {
+      title: "Tech Conference 2025",
+      date: "Tomorrow 10:00 AM",
+      price: "499",
+      category: "Tech",
+      description: "Latest trends in AI & Web",
+      image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg"
+    },
+    {
+      title: "Business Meetup",
+      date: "Sunday 4:00 PM",
+      price: "199",
+      category: "Business",
+      description: "Networking for startups",
+      image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg"
+    }
+  ]));
+}
+
+
+
+
+
+
+
+
+
+
+
 /*********************************************************
  RENDER EVENTS ON PAGE
 **********************************************************/
