@@ -240,9 +240,10 @@ body {
 
 <script>
 
-   if (localStorage.getItem("loggedIn") === "true") {
-    window.location.href = "index.html";
-  }
+  if (localStorage.getItem("isLoggedIn") === "true") {
+  window.location.href = "./index.html";
+}
+
 function showPopup(message, type) {
   const popup = document.getElementById("popup");
   const box = document.getElementById("popupBox");

@@ -2,8 +2,12 @@
  GLOBAL VARIABLES
 **********************************************************/
 
-/* Get events from localStorage or create empty array */
+// Load events from localStorage OR empty array
 let events = JSON.parse(localStorage.getItem("events")) || [];
+
+// Track edit mode
+let editIndex = null;
+
 /*********************************************************
  AUTO LOAD DEMO EVENTS (FIRST TIME ONLY)
 **********************************************************/
@@ -38,12 +42,8 @@ if (!localStorage.getItem("events") || events.length === 0) {
   localStorage.setItem("events", JSON.stringify(events));
 }
 
-/* Used to track edit mode */
-let editIndex = null;
-
-
 /*********************************************************
- GET DOM ELEMENTS
+ GET DOM ELEMENTS (ALWAYS FIRST)
 **********************************************************/
 const openCreateEvent = document.getElementById("openCreateEvent");
 const eventModal = document.getElementById("eventModal");
@@ -52,363 +52,328 @@ const closeEventBtn = document.getElementById("closeEventBtn");
 const saveEventBtn = document.getElementById("saveEventBtn");
 const eventsContainer = document.getElementById("eventsContainer");
 const eventImagePreview = document.getElementById("eventImagePreview");
+const emptyState = document.getElementById("emptyState");
+const categoryFilter = document.getElementById("categoryFilter");
+const sortSelect = document.getElementById("sortEvents");
 
 /*********************************************************
  OPEN CREATE EVENT MODAL
 **********************************************************/
-openCreateEvent.addEventListener("click", function () {
-
-    /* Show modal & overlay */
-    eventModal.style.display = "block";
-    eventModalOverlay.style.display = "block";
-
-    /* Add animation class */
-    setTimeout(function () {
-        eventModal.classList.add("show");
-    }, 10);
-
-    /* Clear old data */
-    clearForm();
+openCreateEvent?.addEventListener("click", () => {
+  eventModal.style.display = "block";
+  eventModalOverlay.style.display = "block";
+  setTimeout(() => eventModal.classList.add("show"), 10);
+  clearForm();
 });
 
 /*********************************************************
- CLOSE MODAL FUNCTION
+ CLOSE MODAL
 **********************************************************/
 function closeModal() {
-
-    /* Remove animation */
-    eventModal.classList.remove("show");
-
-    /* Hide after animation */
-    setTimeout(function () {
-        eventModal.style.display = "none";
-        eventModalOverlay.style.display = "none";
-    }, 300);
-
-    editIndex = null;
+  eventModal.classList.remove("show");
+  setTimeout(() => {
+    eventModal.style.display = "none";
+    eventModalOverlay.style.display = "none";
+  }, 300);
+  editIndex = null;
 }
 
-/* Close modal when clicking cancel button */
-closeEventBtn.addEventListener("click", closeModal);
-
-/* Close modal when clicking overlay */
-eventModalOverlay.addEventListener("click", closeModal);
-
+closeEventBtn?.addEventListener("click", closeModal);
+eventModalOverlay?.addEventListener("click", closeModal);
 
 /*********************************************************
-//adding images through url
+ IMAGE PREVIEW
 **********************************************************/
-document.getElementById("eventImageInput").addEventListener("input", function () {
+document.getElementById("eventImageInput")?.addEventListener("input", function () {
   const url = this.value.trim();
-  const preview = document.getElementById("eventImagePreview");
-
   if (url) {
-    preview.src = url;
-    preview.style.display = "block";
+    eventImagePreview.src = url;
+    eventImagePreview.style.display = "block";
   } else {
-    preview.style.display = "none";
+    eventImagePreview.style.display = "none";
   }
 });
 
-
 /*********************************************************
- SAVE EVENT (CREATE / EDIT)
+ SAVE EVENT
 **********************************************************/
-saveEventBtn.addEventListener("click", function () {
+saveEventBtn?.addEventListener("click", () => {
+  const title = document.getElementById("eventTitleInput").value.trim();
+  const date = document.getElementById("eventDateInput").value.trim();
+  const price = document.getElementById("eventPriceInput").value.trim();
+  const category = document.getElementById("eventCategoryInput").value;
+  const description = document.getElementById("eventDescriptionInput").value.trim();
+  const image = document.getElementById("eventImageInput").value.trim();
 
-    /* Get input values */
-    const title = document.getElementById("eventTitleInput").value.trim();
-    const date = document.getElementById("eventDateInput").value.trim();
-    const price = document.getElementById("eventPriceInput").value.trim();
-    const category = document.getElementById("eventCategoryInput").value;
-    const description = document.getElementById("eventDescriptionInput").value.trim();
+  if (!title || !date || !price || !category || !description || !image) {
+    alert("Please fill all fields");
+    return;
+  }
 
-    /* Validation */
-    const imageUrl = document.getElementById("eventImageInput").value.trim();
+  const eventData = { title, date, price, category, description, image };
 
-if (!title || !date || !price || !category || !description || !imageUrl) {
-  alert("Please fill all fields");
-  return;
-}
+  if (editIndex === null) {
+    events.push(eventData);
+  } else {
+    events[editIndex] = eventData;
+  }
 
-
-
-    /* Event object */
-    const eventData = {
-        title: title,
-        date: date,
-        price: price,
-        category: category,
-        description: description,
-        image: imageUrl
-
-    };
-
-    /* Add or update event */
-    if (editIndex === null) {
-        events.push(eventData);
-    } else {
-        events[editIndex] = eventData;
-    }
-
-
-    /* Refresh UI */
-    renderEvents();
-
-    /* Close modal */
-    closeModal();
+  localStorage.setItem("events", JSON.stringify(events));
+  renderEvents();
+  renderTrendingEvents();
+  closeModal();
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*********************************************************
- RENDER EVENTS ON PAGE
+ RENDER EVENTS
 **********************************************************/
 function renderEvents() {
   eventsContainer.innerHTML = "";
 
-  let visibleCount = 0; // ✅ count rendered cards
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-  events.forEach(function (event, index) {
+  if (events.length === 0) {
+    emptyState.style.display = "block";
+    return;
+  }
 
+  emptyState.style.display = "none";
+
+  events.forEach((event, index) => {
     const col = document.createElement("div");
     col.className = "col-12 col-md-6 col-lg-4";
 
+    const isWishlisted = wishlist.some(w => w.title === event.title);
+
     col.innerHTML = `
       <div class="eventCard">
-
-        <!-- EVENT IMAGE -->
         <div class="eventImageWrap">
           <img src="${event.image}" class="eventImg">
-
-          <!-- CLICKABLE OVERLAY -->
           <div class="imageOverlay" onclick="viewEvent(${index})">
             <span>View Details</span>
           </div>
         </div>
 
-        <!-- EVENT CONTENT -->
         <div class="eventInfo">
-          <h5 class="eventTitle">${event.title}</h5>
-          <p class="eventDate">${event.date}</p>
-          <p class="eventPrice">₹ ${event.price}</p>
-          <p class="eventCategory">${event.category}</p>
+          <h5>${event.title}</h5>
+          <p>${event.date}</p>
+          <p>₹ ${event.price}</p>
+          <p>${event.category}</p>
 
-          <!-- ACTION BUTTONS -->
           <div class="eventActions">
             <button onclick="viewEvent(${index})">View</button>
             <button onclick="editEvent(${index})">Edit</button>
             <button onclick="buyEvent(${index})">Buy</button>
             <button onclick="deleteEvent(${index})">Delete</button>
+            <button onclick="toggleWishlist(${index})" id="heart-${index}">
+              ${isWishlisted ? "❤️" : "🩵"}
+            </button>
           </div>
         </div>
-
       </div>
     `;
 
     eventsContainer.appendChild(col);
-    visibleCount++; // increment
   });
+}
 
-  /* EMPTY STATE HANDLING */
-  const emptyState = document.getElementById("emptyState");
+/*********************************************************
+ SORT EVENTS (FIXED)
+**********************************************************/
+sortSelect?.addEventListener("change", function () {
+  const type = this.value;
 
-  if (visibleCount === 0) {
-    emptyState.style.display = "block";
-  } else {
-    emptyState.style.display = "none";
+  if (type === "low") {
+    events.sort((a, b) => Number(a.price) - Number(b.price));
   }
-}
 
+  if (type === "high") {
+    events.sort((a, b) => Number(b.price) - Number(a.price));
+  }
 
-
-/*********************************************************
- VIEW EVENT DETAILS
-**********************************************************/
-function viewEvent(index) {
-
-  const event = events[index];
-
-  document.getElementById("viewEventTitle").innerText = event.title;
-  document.getElementById("viewEventDate").innerText = event.date;
-  document.getElementById("viewEventPrice").innerText = "₹ " + event.price;
-  document.getElementById("viewEventCategory").innerText = event.category;
-  document.getElementById("viewEventDescription").innerText = event.description;
-  document.getElementById("viewEventImage").src = event.image;
-
-  document.getElementById("viewEventModal").style.display = "block";
-  document.getElementById("viewEventOverlay").style.display = "block";
-
-  setTimeout(() => {
-    document.getElementById("viewEventModal").classList.add("show");
-  }, 10);
-}
-
-
-
-document.getElementById("closeViewEventBtn").onclick = function () {
-  document.getElementById("viewEventModal").classList.remove("show");
-
-  setTimeout(() => {
-    document.getElementById("viewEventModal").style.display = "none";
-    document.getElementById("viewEventOverlay").style.display = "none";
-  }, 300);
-};
-
-/*********************************************************
- EDIT EVENT
-**********************************************************/
-function editEvent(index) {
-
-    editIndex = index;
-    const event = events[index];
-
-    /* Fill form with existing data */
-    document.getElementById("eventTitleInput").value = event.title;
-    document.getElementById("eventDateInput").value = event.date;
-    document.getElementById("eventPriceInput").value = event.price;
-    document.getElementById("eventCategoryInput").value = event.category;
-    document.getElementById("eventDescriptionInput").value = event.description;
-
-
-    eventImagePreview.src = event.image;
-    eventImagePreview.style.display = "block";
-
-    /* Open modal */
-    eventModal.style.display = "block";
-    eventModalOverlay.style.display = "block";
-
-    setTimeout(function () {
-        eventModal.classList.add("show");
-    }, 10);
-}
-
-/*********************************************************
- HERO SLIDING BAR
-**********************************************************/
-
-const heroCarousel = document.querySelector('#heroSlider');
-new bootstrap.Carousel(heroCarousel, {
-    interval: 4000,
-    ride: 'carousel',
-    pause: false
+  localStorage.setItem("events", JSON.stringify(events));
+  renderEvents();
+  renderTrendingEvents();
 });
 
-
 /*********************************************************
- DELETE EVENT
+ CATEGORY FILTER
 **********************************************************/
-function deleteEvent(index) {
-
-    if (confirm("Delete this event?")) {
-        events.splice(index, 1);
-        localStorage.setItem("events", JSON.stringify(events));
-        renderEvents();
-    }
-}
-
-/*********************************************************
- BUY EVENT (STORE TICKET)
-**********************************************************/
-function buyEvent(index) {
-
-    localStorage.setItem(
-        "selectedTicket",
-        JSON.stringify(events[index])
-    );
-
-    window.location.href = "findmytickets.html";
-}
-
-/*********************************************************
- CLEAR FORM FIELDS
-**********************************************************/
-function clearForm() {
-
-    document.getElementById("eventTitleInput").value = "";
-    document.getElementById("eventDateInput").value = "";
-    document.getElementById("eventPriceInput").value = "";
-    document.getElementById("eventDescriptionInput").value = "";
-    document.getElementById("eventImageInput").value = "";
-
-    eventImagePreview.src = "";
-    eventImagePreview.style.display = "none";
-}
-
-/*********************************************************
- LOAD EVENTS ON PAGE LOAD
-**********************************************************/
-renderEvents();
-
-
-/*************************************
- CATEGORY FILTER (DROPDOWN)
-*************************************/
-const categoryFilter = document.getElementById("categoryFilter");
-
-categoryFilter.addEventListener("change", function () {
-    filterEvents();
-});
+categoryFilter?.addEventListener("change", filterEvents);
 
 function filterEvents() {
-    const selectedCategory = categoryFilter.value;
+  const selected = categoryFilter.value;
+  eventsContainer.innerHTML = "";
 
-    eventsContainer.innerHTML = "";
-
-    events.forEach(function (event, index) {
-
-        if (selectedCategory === "All" || event.category === selectedCategory) {
-
-            const col = document.createElement("div");
-            col.className = "col-12 col-md-6 col-lg-4";
-            col.innerHTML = `
+  events.forEach((event, index) => {
+    if (selected === "All" || event.category === selected) {
+      const col = document.createElement("div");
+      col.className = "col-12 col-md-6 col-lg-4";
+      col.innerHTML = `
         <div class="eventCard">
           <img src="${event.image}" class="eventImg">
           <div class="eventInfo">
-            <h5 class="eventTitle">${event.title}</h5>
-            <p class="eventDate">${event.date}</p>
-            <p class="eventPrice">₹ ${event.price}</p>
-            <p>${event.category}</p>
-
-            <button class="btn btn-sm btn-primary" onclick="viewEvent(${index})">View</button>
-            <button class="btn btn-sm btn-warning" onclick="editEvent(${index})">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteEvent(${index})">Delete</button>
+            <h5>${event.title}</h5>
+            <p>${event.date}</p>
+            <p>₹ ${event.price}</p>
           </div>
         </div>
       `;
+      eventsContainer.appendChild(col);
+    }
+  });
 
-            eventsContainer.appendChild(col);
-        }
-    });
-
-
-    const emptyState = document.getElementById("emptyState");
-
-if (eventsContainer.children.length === 0) {
-  emptyState.style.display = "block";
-} else {
-  emptyState.style.display = "none";
+  emptyState.style.display =
+    eventsContainer.children.length === 0 ? "block" : "none";
 }
 
+/*********************************************************
+ WISHLIST TOGGLE
+**********************************************************/
+function toggleWishlist(index) {
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  const event = events[index];
+
+  const found = wishlist.findIndex(w => w.title === event.title);
+
+  if (found === -1) {
+    wishlist.push(event);
+  } else {
+    wishlist.splice(found, 1);
+  }
+
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  renderEvents();
 }
 
-/*************************************
- CATEGORY ICON CLICK FILTER
-*************************************/
-document.querySelectorAll(".categoryItem").forEach(function (item) {
-    item.addEventListener("click", function () {
-        const selected = this.getAttribute("data-category");
-        categoryFilter.value = selected;
-        filterEvents();
-    });
+/*********************************************************
+ TRENDING EVENTS
+**********************************************************/
+function renderTrendingEvents() {
+  const container = document.getElementById("trendingEvents");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  events.slice(0, 6).forEach(event => {
+    const div = document.createElement("div");
+    div.className = "trendingCard";
+    div.innerHTML = `
+      <img src="${event.image}">
+      <h6>${event.title}</h6>
+      <p>₹ ${event.price}</p>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/*********************************************************
+ VIEW / EDIT / DELETE / BUY
+**********************************************************/
+function viewEvent(index) { alert(events[index].title); }
+function editEvent(index) { editIndex = index; }
+function deleteEvent(index) {
+  if (confirm("Delete event?")) {
+    events.splice(index, 1);
+    localStorage.setItem("events", JSON.stringify(events));
+    renderEvents();
+  }
+}
+function buyEvent(index) {
+  localStorage.setItem("selectedTicket", JSON.stringify(events[index]));
+  window.location.href = "findmytickets.html";
+}
+
+/*********************************************************
+ CLEAR FORM
+**********************************************************/
+function clearForm() {
+  document.querySelectorAll("#eventModal input, #eventModal textarea").forEach(i => i.value = "");
+  eventImagePreview.style.display = "none";
+}
+
+
+
+/*********************************************************
+ ANIMATED STATISTICS COUNTER
+**********************************************************/
+const counters = document.querySelectorAll(".statNumber");
+
+counters.forEach(counter => {
+  const target = +counter.getAttribute("data-target");
+  let count = 0;
+
+  const increment = Math.ceil(target / 100);
+
+  function updateCounter() {
+    count += increment;
+
+    if (count < target) {
+      counter.innerText = count;
+      requestAnimationFrame(updateCounter);
+    } 
+    else {
+      counter.innerText = target + "+";
+    }
+  }
+
+  updateCounter();
 });
+
+
+
+
+
+
+
+
+
+/************************************
+ NEWSLETTER SUBSCRIPTION
+************************************/
+function subscribeNewsletter() {
+  const emailInput = document.getElementById("newsletterEmail");
+  const message = document.getElementById("newsletterMsg");
+
+  const email = emailInput.value.trim();
+
+  // Simple validation
+  if (!email || !email.includes("@")) {
+    message.style.color = "red";
+    message.innerText = "Please enter a valid email address ❌";
+    return;
+  }
+
+  // Get old subscribers
+  let subscribers = JSON.parse(localStorage.getItem("newsletter")) || [];
+
+  // Prevent duplicate emails
+  if (subscribers.includes(email)) {
+    message.style.color = "orange";
+    message.innerText = "You are already subscribed 😊";
+    return;
+  }
+
+  // Save email
+  subscribers.push(email);
+  localStorage.setItem("newsletter", JSON.stringify(subscribers));
+
+  // Success message
+  message.style.color = "green";
+  message.innerText = "Subscribed successfully 🎉";
+
+  // Clear input
+  emailInput.value = "";
+}
+
+
+
+
+
+
+
+/*********************************************************
+ INITIAL LOAD
+**********************************************************/
+renderEvents();
+renderTrendingEvents();

@@ -21,7 +21,7 @@
 
 <body>
 
-    <<!--=========================PREMIUM NAVBAR=========================-->
+    <!--=========================PREMIUM NAVBAR=========================-->
         <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
             <div class="container">
 
@@ -41,7 +41,6 @@
 
                     <!-- SEARCH BAR -->
                     <form class="d-flex mx-auto navbarSearch">
-                        <input class="form-control rounded-pill me-2" type="search" placeholder="Search events">
                         <input class="form-control rounded-pill" type="search" placeholder="Choose a location">
                     </form>
 
@@ -63,18 +62,15 @@
                                 Find my tickets
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="login.html">
-                                Log In
-                            </a>
+                          <a class="nav-link fw-medium" href="wishlist.html">Wishlist ❤️</a>
                         </li>
+                           
 
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn btn-outline-dark rounded-pill px-3" href="signup.html">
-                                Sign Up
-                            </a>
-                        </li>
+                        <button id="logoutBtn" class="btn btn-outline-danger btn-sm">
+                            Logout
+                        </button>
+
 
                     </ul>
                 </div>
@@ -221,14 +217,46 @@
 
                 </div>
 
-                <div class="colmd4 mb2">
-                    <input id="searchFilter" type="text" class="formcontrol" placeholder="Search events by title">
-                </div>
+                <select id="sortEvents" class="form-select mb-3">
+  <option value="">Sort events</option>
+  <option value="low">Price: Low → High</option>
+  <option value="high">Price: High → Low</option>
+  <option value="date">By Date</option>
+</select>
+
             </div>
 
             <!-- EVENTS WILL LOAD HERE -->
             <div id="eventsContainer" class="row g-4"></div>
+
+
+
+            <!-- ================= TRENDING EVENTS SECTION ================= -->
+<section class="trendingSection">
+  <div class="sectionHeader">
+    <h2>🔥 Trending Events</h2>
+    <p>Most popular events happening right now</p>
+  </div>
+
+  <div class="trendingScroll" id="trendingEvents">
+    <!-- JS will insert cards here -->
+  </div>
+</section>
+<!-- =========================================================== -->
+
         </section>
+
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- =========================
      CREATE EVENT MODAL
@@ -257,6 +285,8 @@
                 <label>Price (₹)</label>
                 <input id="eventPriceInput" type="number" placeholder="Free / 499">
             </div>
+
+            
 
             <!-- CATEGORY -->
             <div class="formGroup">
@@ -314,14 +344,280 @@
             </button>
         </div>
 
+
+
+
+
+
+<!-- ================================
+ SECTION 2 : WHY CHOOSE US
+================================ -->
+<section class="whySection">
+  <div class="container">
+
+    <h2 class="sectionTitle">Why Choose Our Platform</h2>
+    <p class="sectionSubTitle">
+      Discover events easily, manage tickets, and enjoy premium features.
+    </p>
+
+    <div class="whyGrid">
+
+      <div class="whyCard">
+        <div class="whyIcon">🎟️</div>
+        <h4>Easy Ticket Booking</h4>
+        <p>Book event tickets in seconds with a smooth and simple flow.</p>
+      </div>
+
+      <div class="whyCard">
+        <div class="whyIcon">❤️</div>
+        <h4>Wishlist Events</h4>
+        <p>Save your favorite events and come back anytime.</p>
+      </div>
+
+      <div class="whyCard">
+        <div class="whyIcon">⚡</div>
+        <h4>Fast & Secure</h4>
+        <p>Your data is stored securely using browser local storage.</p>
+      </div>
+
+      <div class="whyCard">
+        <div class="whyIcon">📱</div>
+        <h4>Mobile Friendly</h4>
+        <p>Fully responsive design works on mobile, tablet, and desktop.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- ================================
+ SECTION 4 : CUSTOMER REVIEWS
+================================ -->
+<section class="reviewSection">
+  <div class="container">
+
+    <h2 class="sectionTitle">What Our Users Say</h2>
+    <p class="sectionSubTitle">
+      Real experiences from people who attended events.
+    </p>
+
+    <div class="reviewGrid">
+
+      <div class="reviewCard">
+        <p class="reviewText">
+          “Booking tickets was super easy and fast. Loved the clean UI!”
+        </p>
+        <div class="reviewUser">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg">
+          <div>
+            <h5>Rahul Sharma</h5>
+            <span>Music Event</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviewCard">
+        <p class="reviewText">
+          “The wishlist feature helped me track upcoming tech events.”
+        </p>
+        <div class="reviewUser">
+          <img src="https://randomuser.me/api/portraits/women/45.jpg">
+          <div>
+            <h5>Ananya Patel</h5>
+            <span>Tech Conference</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviewCard">
+        <p class="reviewText">
+          “Smooth experience on mobile. Highly recommended!”
+        </p>
+        <div class="reviewUser">
+          <img src="https://randomuser.me/api/portraits/men/76.jpg">
+          <div>
+            <h5>Vikram Rao</h5>
+            <span>Business Meetup</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+<!-- ================================
+ PLATFORM STATISTICS
+================================ -->
+<section class="statsSection">
+  <div class="statsContainer">
+
+    <div class="statCard">
+      <i class="fa-solid fa-calendar-check"></i>
+      <h2 class="statNumber" data-target="120">0</h2>
+      <p>Events Hosted</p>
+    </div>
+
+    <div class="statCard">
+      <i class="fa-solid fa-users"></i>
+      <h2 class="statNumber" data-target="10000">0</h2>
+      <p>Happy Users</p>
+    </div>
+
+    <div class="statCard">
+      <i class="fa-solid fa-ticket"></i>
+      <h2 class="statNumber" data-target="5000">0</h2>
+      <p>Tickets Sold</p>
+    </div>
+
+    <div class="statCard">
+      <i class="fa-solid fa-location-dot"></i>
+      <h2 class="statNumber" data-target="50">0</h2>
+      <p>Cities Covered</p>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<!-- ================================
+ NEWSLETTER SUBSCRIPTION
+================================ -->
+<section class="newsletterSection">
+  <div class="newsletterBox">
+
+    <h2>Subscribe to our Newsletter</h2>
+    <p>Get latest events, offers and updates directly in your inbox 📩</p>
+
+    <div class="newsletterForm">
+      <input
+        type="email"
+        id="newsletterEmail"
+        placeholder="Enter your email"
+      />
+      <button onclick="subscribeNewsletter()">Subscribe</button>
+    </div>
+
+    <small id="newsletterMsg"></small>
+
+  </div>
+</section>
+
+
+
+
+
+<!-- ================================
+ MOBILE APP PROMOTION
+================================ -->
+<section class="appPromoSection">
+  <div class="appPromoContainer">
+
+    <!-- LEFT CONTENT -->
+    <div class="appPromoText">
+      <h2>Get Our Mobile App</h2>
+      <p>
+        Book events faster, get instant notifications,
+        and manage tickets on the go 📱
+      </p>
+
+      <div class="appButtons">
+        <a href="#" class="storeBtn play">
+          <i class="fa-brands fa-google-play"></i>
+          Google Play
+        </a>
+
+        <a href="#" class="storeBtn apple">
+          <i class="fa-brands fa-apple"></i>
+          App Store
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT IMAGE -->
+    <div class="appPromoImage">
+      <img
+        src="https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg"
+        alt="Mobile App Preview"
+      />
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
         <!-- =====================================================
      FOOTER
 ===================================================== -->
-        <footer class="footerSection">
-            <div class="container">
-                <p>© 2025 Eventbrite</p>
-            </div>
-        </footer>
+       <!-- ================================
+ FOOTER
+================================ -->
+<footer class="siteFooter">
+  <div class="footerContainer">
+
+    <!-- BRAND -->
+    <div class="footerCol">
+      <h3>Eventify</h3>
+      <p>
+        Discover events, book tickets, and enjoy experiences.
+        Built with ❤️ using JavaScript.
+      </p>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="footerCol">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="findmytickets.html">My Tickets</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+
+    <!-- SOCIAL LINKS -->
+    <div class="footerCol">
+      <h4>Follow Us</h4>
+      <div class="socialIcons">
+        <a href="https://instagram.com" target="_blank">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="https://github.com" target="_blank">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <a href="https://linkedin.com" target="_blank">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+        <a href="https://youtube.com" target="_blank">
+          <i class="fa-brands fa-youtube"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="footerBottom">
+    © 2026 Eventify. All rights reserved.
+  </div>
+</footer>
+
 
 
 
