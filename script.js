@@ -135,9 +135,10 @@ saveEventBtn.addEventListener("click", function () {
 function renderEvents() {
   eventsContainer.innerHTML = "";
 
+  let visibleCount = 0; // ✅ count rendered cards
+
   events.forEach(function (event, index) {
 
-    // ✅ Bootstrap grid (DO NOT CHANGE)
     const col = document.createElement("div");
     col.className = "col-12 col-md-6 col-lg-4";
 
@@ -146,17 +147,19 @@ function renderEvents() {
 
         <!-- EVENT IMAGE -->
         <div class="eventImageWrap">
-          <img src="${event.image}" class="eventImg" alt="event image">
+          <img src="${event.image}" class="eventImg">
+
+          <!-- CLICKABLE OVERLAY -->
+          <div class="imageOverlay" onclick="viewEvent(${index})">
+            <span>View Details</span>
+          </div>
         </div>
 
         <!-- EVENT CONTENT -->
         <div class="eventInfo">
           <h5 class="eventTitle">${event.title}</h5>
-
           <p class="eventDate">${event.date}</p>
-
           <p class="eventPrice">₹ ${event.price}</p>
-
           <p class="eventCategory">${event.category}</p>
 
           <!-- ACTION BUTTONS -->
@@ -172,19 +175,53 @@ function renderEvents() {
     `;
 
     eventsContainer.appendChild(col);
+    visibleCount++; // increment
   });
+
+  /* EMPTY STATE HANDLING */
+  const emptyState = document.getElementById("emptyState");
+
+  if (visibleCount === 0) {
+    emptyState.style.display = "block";
+  } else {
+    emptyState.style.display = "none";
+  }
 }
+
 
 
 /*********************************************************
  VIEW EVENT DETAILS
 **********************************************************/
 function viewEvent(index) {
-    alert(
-        events[index].title + "\n\n" +
-        events[index].description
-    );
+
+  const event = events[index];
+
+  document.getElementById("viewEventTitle").innerText = event.title;
+  document.getElementById("viewEventDate").innerText = event.date;
+  document.getElementById("viewEventPrice").innerText = "₹ " + event.price;
+  document.getElementById("viewEventCategory").innerText = event.category;
+  document.getElementById("viewEventDescription").innerText = event.description;
+  document.getElementById("viewEventImage").src = event.image;
+
+  document.getElementById("viewEventModal").style.display = "block";
+  document.getElementById("viewEventOverlay").style.display = "block";
+
+  setTimeout(() => {
+    document.getElementById("viewEventModal").classList.add("show");
+  }, 10);
 }
+
+
+
+document.getElementById("closeViewEventBtn").onclick = function () {
+  document.getElementById("viewEventModal").classList.remove("show");
+
+  setTimeout(() => {
+    document.getElementById("viewEventModal").style.display = "none";
+    document.getElementById("viewEventOverlay").style.display = "none";
+  }, 300);
+};
 
 /*********************************************************
  EDIT EVENT
@@ -218,12 +255,12 @@ function editEvent(index) {
  HERO SLIDING BAR
 **********************************************************/
 
- const heroCarousel = document.querySelector('#heroSlider');
-  new bootstrap.Carousel(heroCarousel, {
+const heroCarousel = document.querySelector('#heroSlider');
+new bootstrap.Carousel(heroCarousel, {
     interval: 4000,
     ride: 'carousel',
     pause: false
-  });
+});
 
 
 /*********************************************************
@@ -280,22 +317,22 @@ renderEvents();
 const categoryFilter = document.getElementById("categoryFilter");
 
 categoryFilter.addEventListener("change", function () {
-  filterEvents();
+    filterEvents();
 });
 
 function filterEvents() {
-  const selectedCategory = categoryFilter.value;
+    const selectedCategory = categoryFilter.value;
 
-  eventsContainer.innerHTML = "";
+    eventsContainer.innerHTML = "";
 
-  events.forEach(function (event, index) {
+    events.forEach(function (event, index) {
 
-    if (selectedCategory === "All" || event.category === selectedCategory) {
+        if (selectedCategory === "All" || event.category === selectedCategory) {
 
-      const col = document.createElement("div");
-      col.className = "col-md-4";
+            const col = document.createElement("div");
+            col.className = "col-md-4";
 
-      col.innerHTML = `
+            col.innerHTML = `
         <div class="eventCard">
           <img src="${event.image}" class="eventImg">
           <div class="eventInfo">
@@ -311,18 +348,18 @@ function filterEvents() {
         </div>
       `;
 
-      eventsContainer.appendChild(col);
-    }
-  });
+            eventsContainer.appendChild(col);
+        }
+    });
 }
 
 /*************************************
  CATEGORY ICON CLICK FILTER
 *************************************/
 document.querySelectorAll(".categoryItem").forEach(function (item) {
-  item.addEventListener("click", function () {
-    const selected = this.getAttribute("data-category");
-    categoryFilter.value = selected;
-    filterEvents();
-  });
+    item.addEventListener("click", function () {
+        const selected = this.getAttribute("data-category");
+        categoryFilter.value = selected;
+        filterEvents();
+    });
 });

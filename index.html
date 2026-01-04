@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- PAGE TITLE -->
-    <title>Eventbrite Clone Premium</title>
+    <title>Eventbrite </title>
 
     <!-- BOOTSTRAP CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
@@ -291,7 +291,28 @@
             </div>
 
         </div>
+<p id="emptyState" style="display:none;text-align:center;margin-top:40px;">
+  No events found
+</p>
+  <!-- =========================
+     VIEW EVENT MODAL
+========================= -->
+<div id="viewEventOverlay" class="eventModalOverlay"></div>
 
+<div id="viewEventModal" class="eventModal">
+  <h3 id="viewEventTitle"></h3>
+
+  <img id="viewEventImage" class="eventImagePreview">
+
+  <p id="viewEventDate"></p>
+  <p id="viewEventPrice"></p>
+  <p id="viewEventCategory"></p>
+  <p id="viewEventDescription"></p>
+
+  <button id="closeViewEventBtn" class="btn btn-secondary mt-2">
+    Close
+  </button>
+</div>
 
         <!-- =====================================================
      FOOTER

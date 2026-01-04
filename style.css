@@ -506,3 +506,54 @@ body{
 .eventActions button:hover {
   color: #ff5a2d;
 }
+
+
+/* ===== Equal height cards ===== */
+.eventCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.eventInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ===== Image hover overlay ===== */
+.eventImageWrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.eventImageWrap:hover .imageOverlay {
+  opacity: 1;
+}
+
+
+
+.eventActions {
+  margin-top: auto;
+}
+.eventCard {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.eventCard:hover {
+  box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+}
