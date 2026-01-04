@@ -133,36 +133,48 @@ saveEventBtn.addEventListener("click", function () {
  RENDER EVENTS ON PAGE
 **********************************************************/
 function renderEvents() {
+  eventsContainer.innerHTML = "";
 
-    /* Clear old cards */
-    eventsContainer.innerHTML = "";
+  events.forEach(function (event, index) {
 
-    /* Loop through events */
-    events.forEach(function (event, index) {
+    // ✅ Bootstrap grid (DO NOT CHANGE)
+    const col = document.createElement("div");
+    col.className = "col-12 col-md-6 col-lg-4";
 
-        const col = document.createElement("div");
-        col.className = "colmd4";
+    col.innerHTML = `
+      <div class="eventCard">
 
-        col.innerHTML = `
-            <div class="eventCard">
-                <img src="${event.image}" class="eventImg">
-                <div class="eventInfo">
-                    <h5 class="eventTitle">${event.title}</h5>
-                    <p class="eventDate">${event.date}</p>
-                    <p class="eventPrice">₹ ${event.price}</p>
-                    <p>${event.category}</p>
+        <!-- EVENT IMAGE -->
+        <div class="eventImageWrap">
+          <img src="${event.image}" class="eventImg" alt="event image">
+        </div>
 
-                    <button class="btn btnprimary btnsm" onclick="viewEvent(${index})">View</button>
-                    <button class="btn btnwarning btnsm" onclick="editEvent(${index})">Edit</button>
-                    <button class="btn btnsuccess btnsm" onclick="buyEvent(${index})">Buy</button>
-                    <button class="btn btndanger btnsm" onclick="deleteEvent(${index})">Delete</button>
-                </div>
-            </div>
-        `;
+        <!-- EVENT CONTENT -->
+        <div class="eventInfo">
+          <h5 class="eventTitle">${event.title}</h5>
 
-        eventsContainer.appendChild(col);
-    });
+          <p class="eventDate">${event.date}</p>
+
+          <p class="eventPrice">₹ ${event.price}</p>
+
+          <p class="eventCategory">${event.category}</p>
+
+          <!-- ACTION BUTTONS -->
+          <div class="eventActions">
+            <button onclick="viewEvent(${index})">View</button>
+            <button onclick="editEvent(${index})">Edit</button>
+            <button onclick="buyEvent(${index})">Buy</button>
+            <button onclick="deleteEvent(${index})">Delete</button>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    eventsContainer.appendChild(col);
+  });
 }
+
 
 /*********************************************************
  VIEW EVENT DETAILS

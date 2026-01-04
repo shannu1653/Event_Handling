@@ -427,3 +427,82 @@ body{
 .btnSecondary:hover {
   background: #e0e0e0;
 }
+
+
+
+/* =========================
+   EVENTBRITE STYLE CARDS
+========================= */
+
+.eventCard {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+
+.eventCard:hover {
+  transform: translateY(-6px);
+}
+
+/* IMAGE */
+.eventImageWrap {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.eventImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* CONTENT */
+.eventInfo {
+  padding: 16px;
+}
+
+.eventTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.eventDate {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.eventPrice {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.eventCategory {
+  font-size: 14px;
+  color: #ff5a2d;
+  font-weight: 600;
+}
+
+/* ACTIONS */
+.eventActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.eventActions button {
+  background: none;
+  border: none;
+  color: #222;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eventActions button:hover {
+  color: #ff5a2d;
+}
