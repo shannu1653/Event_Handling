@@ -8,8 +8,6 @@ let events = JSON.parse(localStorage.getItem("events")) || [];
 /* Used to track edit mode */
 let editIndex = null;
 
-/* Store image as Base64 */
-let selectedImage = "";
 
 /*********************************************************
  GET DOM ELEMENTS
@@ -63,26 +61,22 @@ closeEventBtn.addEventListener("click", closeModal);
 /* Close modal when clicking overlay */
 eventModalOverlay.addEventListener("click", closeModal);
 
+
 /*********************************************************
- IMAGE UPLOAD + PREVIEW (BASE64)
+//adding images through url
 **********************************************************/
-document.getElementById("eventImageInput").addEventListener("change", function () {
+document.getElementById("eventImageInput").addEventListener("input", function () {
+  const url = this.value.trim();
+  const preview = document.getElementById("eventImagePreview");
 
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function () {
-        selectedImage = reader.result;
-
-        /* Show preview image */
-        eventImagePreview.src = selectedImage;
-        eventImagePreview.style.display = "block";
-    };
-
-    reader.readAsDataURL(file);
+  if (url) {
+    preview.src = url;
+    preview.style.display = "block";
+  } else {
+    preview.style.display = "none";
+  }
 });
+
 
 /*********************************************************
  SAVE EVENT (CREATE / EDIT)
@@ -97,10 +91,13 @@ saveEventBtn.addEventListener("click", function () {
     const description = document.getElementById("eventDescriptionInput").value.trim();
 
     /* Validation */
-    if (!title || !date || !price || !category || !description || !selectedImage) {
-        alert("Please fill all fields");
-        return;
-    }
+    const imageUrl = document.getElementById("eventImageInput").value.trim();
+
+    if (!title || !date || !price || !category || !description || !imageUrl) {
+    alert("Please fill all fields");
+    return;
+}
+
 
     /* Event object */
     const eventData = {
@@ -109,7 +106,8 @@ saveEventBtn.addEventListener("click", function () {
         price: price,
         category: category,
         description: description,
-        image: selectedImage
+        image: imageUrl
+
     };
 
     /* Add or update event */

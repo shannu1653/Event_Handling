@@ -279,8 +279,8 @@
 
             <!-- IMAGE -->
             <div class="formGroup">
-                <label>Event Image</label>
-                <input id="eventImageInput" type="file" accept="image/*">
+                <label>Event Image URL</label>
+                <input id="eventImageInput" type="url" placeholder="Paste image URL....../">
                 <img id="eventImagePreview" class="eventImagePreview">
             </div>
 
@@ -291,28 +291,28 @@
             </div>
 
         </div>
-<p id="emptyState" style="display:none;text-align:center;margin-top:40px;">
-  No events found
-</p>
-  <!-- =========================
+        <p id="emptyState" style="display:none;text-align:center;margin-top:40px;">
+            No events found
+        </p>
+        <!-- =========================
      VIEW EVENT MODAL
 ========================= -->
-<div id="viewEventOverlay" class="eventModalOverlay"></div>
+        <div id="viewEventOverlay" class="eventModalOverlay"></div>
 
-<div id="viewEventModal" class="eventModal">
-  <h3 id="viewEventTitle"></h3>
+        <div id="viewEventModal" class="eventModal">
+            <h3 id="viewEventTitle"></h3>
 
-  <img id="viewEventImage" class="eventImagePreview">
+            <img id="viewEventImage" class="eventImagePreview">
 
-  <p id="viewEventDate"></p>
-  <p id="viewEventPrice"></p>
-  <p id="viewEventCategory"></p>
-  <p id="viewEventDescription"></p>
+            <p id="viewEventDate"></p>
+            <p id="viewEventPrice"></p>
+            <p id="viewEventCategory"></p>
+            <p id="viewEventDescription"></p>
 
-  <button id="closeViewEventBtn" class="btn btn-secondary mt-2">
-    Close
-  </button>
-</div>
+            <button id="closeViewEventBtn" class="btn btn-secondary mt-2">
+                Close
+            </button>
+        </div>
 
         <!-- =====================================================
      FOOTER
@@ -330,6 +330,8 @@
 
         <!-- CUSTOM JS -->
         <script src="./script.js" defer></script>
+        <script src="./buy.js" defer></script>
+
 
 </body>
 

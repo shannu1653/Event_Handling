@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find My Tickets</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --accent:#ff5a2d;
+      --muted:#6b7280;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    body{
+      background:linear-gradient(135deg,#fff7f3,#f7fbff);
+      font-family:Inter,system-ui,Arial;
+      margin:0;
+    }
+
+    .containerWrap{
+      max-width:1100px;
+      margin:30px auto;
+      padding:20px;
+    }
+
+    /* Header */
+    .ticketsHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .brandBadge{
+      background:var(--accent);
+      color:white;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:700;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      box-shadow:var(--shadow);
+    }
+
+    .summaryCard{
+      display:flex;
+      gap:20px;
+      align-items:center;
+      background:white;
+      padding:12px 16px;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .stat h3{ margin:0; font-size:20px; }
+    .stat p{ margin:0; font-size:13px; color:var(--muted); }
+
+    /* Grid */
+    .ticketsGrid{
+      margin-top:24px;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:16px;
+    }
+
+    .ticketCard{
+      background:white;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      transition:.25s;
+    }
+
+    .ticketCard:hover{
+      transform:translateY(-6px);
+    }
+
+    .ticketTop{
+      height:150px;
+      overflow:hidden;
+    }
+
+    .ticketTop img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .ticketBody{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      flex:1;
+    }
+
+    .ticketTitle{
+      font-size:16px;
+      font-weight:700;
+    }
+
+    .ticketMeta{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .ticketFooter{
+      margin-top:auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-top:1px dashed #eee;
+      padding-top:10px;
+      gap:8px;
+    }
+
+    .priceTag{
+      font-weight:700;
+      font-size:14px;
+      color:#111;
+    }
+
+    .qty{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .btnTiny{
+      font-size:13px;
+      padding:6px 8px;
+      border-radius:8px;
+    }
+
+    .emptyState{
+      margin-top:40px;
+      text-align:center;
+      background:white;
+      padding:40px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      color:var(--muted);
+    }
+
+    .removing{
+      animation:removeCard .4s forwards;
+    }
+
+    @keyframes removeCard{
+      to{
+        opacity:0;
+        transform:translateX(40px) scale(.95);
+        height:0;
+        margin:0;
+      }
+    }
+
+/* adding quntity */
+
+
+    .quantityBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.qtyBtn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: #ff5a3c;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.qtyValue {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+  </style>
+</head>
+
+<body>
+
+<div class="containerWrap">
+
+  <!-- HEADER -->
+  <header class="ticketsHeader">
+    <div class="brandBadge">
+      <i class="fa-solid fa-ticket"></i> My Tickets
+    </div>
+
+    <div class="summaryCard">
+      <div class="stat">
+        <h3 id="ticketCount">0</h3>
+        <p>Events</p>
+      </div>
+      <div class="stat">
+        <h3 id="grandTotal">₹0</h3>
+        <p>Total</p>
+      </div>
+      <button id="clearBtn" class="btn btn-outline-danger btn-sm">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- GRID -->
+  <main>
+    <div id="ticketsGrid" class="ticketsGrid"></div>
+
+    <div id="emptyState" class="emptyState" style="display:none;">
+      <h4>No tickets yet</h4>
+      <p>Buy events from the homepage and they will appear here.</p>
+      <a href="index.html" class="btn btn-danger">Browse Events</a>
+    </div>
+  </main>
+</div>
+
+
+<script>
+/*************************************************
+ FIND MY TICKETS (UPDATED FOR NEW BUY FLOW)
+**************************************************/
+
+const ticketsGrid = document.getElementById("ticketsGrid");
+const ticketCountEl = document.getElementById("ticketCount");
+const grandTotalEl = document.getElementById("grandTotal");
+const emptyState = document.getElementById("emptyState");
+const clearBtn = document.getElementById("clearBtn");
+
+/* Load tickets */
+function loadTickets(){
+  return JSON.parse(localStorage.getItem("tickets")) || [];
+}
+
+/* Save tickets */
+function saveTickets(tickets){
+  localStorage.setItem("tickets", JSON.stringify(tickets));
+}
+
+/* Render tickets */
+function renderTickets(){
+  const tickets = loadTickets();
+  ticketsGrid.innerHTML = "";
+
+  if(tickets.length === 0){
+    emptyState.style.display = "block";
+    ticketCountEl.innerText = "0";
+    grandTotalEl.innerText = "₹0";
+    return;
+  }
+
+  emptyState.style.display = "none";
+
+  let grandTotal = 0;
+
+  tickets.forEach((t, index) => {
+
+    grandTotal += t.totalPrice;
+
+    const card = document.createElement("div");
+    card.className = "ticketCard";
+
+    card.innerHTML = `
+      <div class="ticketTop">
+        <img src="${t.image}">
+      </div>
+
+      <div class="ticketBody">
+        <div class="ticketTitle">${t.title}</div>
+        <div class="ticketMeta">${t.date}</div>
+        <div class="ticketMeta">Category: ${t.category}</div>
+
+        <div class="ticketFooter">
+          <div>
+            <div class="priceTag">₹ ${t.totalPrice}</div>
+
+             <div class="quantityBox">
+             <button class="qtyBtn" onclick="decreaseQty(${index})">−</button>
+             <span class="qtyValue">${t.quantity}</span>
+             <button class="qtyBtn" onclick="increaseQty(${index})">+</button>
+           </div>
+
+          </div>
+
+          <button class="btn btn-sm btn-danger btnTiny" onclick="removeTicket(${index})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+
+    ticketsGrid.appendChild(card);
+  });
+
+  ticketCountEl.innerText = tickets.length;
+  grandTotalEl.innerText = "₹ " + grandTotal;
+}
+
+// Increase amount
+function increaseQty(index) {
+  let tickets = loadTickets();
+
+  tickets[index].quantity += 1;
+  tickets[index].totalPrice =
+    tickets[index].quantity * tickets[index].price;
+
+  saveTickets(tickets);
+  renderTickets();
+}
+
+
+
+
+//decresing amount
+function decreaseQty(index) {
+  let tickets = loadTickets();
+
+  if (tickets[index].quantity > 1) {
+    tickets[index].quantity -= 1;
+    tickets[index].totalPrice =
+      tickets[index].quantity * tickets[index].price;
+  }
+
+  saveTickets(tickets);
+  renderTickets();
+}
+
+
+
+/* Remove ticket */
+function removeTicket(index){
+  if(!confirm("Remove this ticket?")) return;
+
+  const tickets = loadTickets();
+  tickets.splice(index,1);
+  saveTickets(tickets);
+  renderTickets();
+}
+
+/* Clear all */
+clearBtn.onclick = function(){
+  if(confirm("Clear all tickets?")){
+    localStorage.removeItem("tickets");
+    renderTickets();
+  }
+};
+
+/* Initial load */
+renderTickets();
+</script>
+
+</body>
+</html>
