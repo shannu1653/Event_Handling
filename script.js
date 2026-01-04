@@ -1,6 +1,12 @@
 /*********************************************************
  GLOBAL VARIABLES
 **********************************************************/
+/*********************************************************
+ AUTH GUARD – BLOCK UNAUTHORIZED ACCESS
+**********************************************************/
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
 
 // Load events from localStorage OR empty array
 let events = JSON.parse(localStorage.getItem("events")) || [];
@@ -94,6 +100,25 @@ document.getElementById("eventImageInput")?.addEventListener("input", function (
   }
 });
 
+
+/*********************************************************
+ LOGOUT FUNCTION (FIXED)
+**********************************************************/
+document.getElementById("logoutBtn")?.addEventListener("click", function () {
+
+  // Remove login flag (THIS IS THE KEY USED IN LOGIN)
+  localStorage.removeItem("loggedIn");
+
+  // Optional: clear user-related data
+  localStorage.removeItem("tickets");
+  localStorage.removeItem("selectedTicket");
+
+  // Redirect to login page
+  window.location.href = "login.html";
+});
+
+
+
 /*********************************************************
  SAVE EVENT
 **********************************************************/
@@ -146,7 +171,7 @@ function renderEvents() {
     const isWishlisted = wishlist.some(w => w.title === event.title);
 
     col.innerHTML = `
-      <div class="eventCard">
+      <div class="eventCard fadeCard">
         <div class="eventImageWrap">
           <img src="${event.image}" class="eventImg">
           <div class="imageOverlay" onclick="viewEvent(${index})">
@@ -297,28 +322,60 @@ function clearForm() {
 /*********************************************************
  ANIMATED STATISTICS COUNTER
 **********************************************************/
-const counters = document.querySelectorAll(".statNumber");
+/*********************************************************
+ ANIMATE STATS ONLY WHEN VISIBLE
+**********************************************************/
 
-counters.forEach(counter => {
-  const target = +counter.getAttribute("data-target");
-  let count = 0;
+// 1️⃣ Select stats section
+const statsSection = document.getElementById("statsSection");
 
-  const increment = Math.ceil(target / 100);
+// 2️⃣ Select all counters
+const statNumbers = document.querySelectorAll(".statNumber");
 
-  function updateCounter() {
-    count += increment;
+// 3️⃣ Flag to run animation only once
+let statsAnimated = false;
 
-    if (count < target) {
-      counter.innerText = count;
-      requestAnimationFrame(updateCounter);
-    } 
-    else {
-      counter.innerText = target + "+";
+// 4️⃣ Counter animation function
+function animateStats() {
+  statNumbers.forEach(counter => {
+    const target = +counter.getAttribute("data-target");
+    let count = 0;
+
+    const increment = Math.ceil(target / 100);
+
+    function updateCounter() {
+      count += increment;
+
+      if (count < target) {
+        counter.innerText = count;
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.innerText = target + "+";
+      }
     }
-  }
 
-  updateCounter();
-});
+    updateCounter();
+  });
+}
+
+// 5️⃣ Intersection Observer
+const statsObserver = new IntersectionObserver(
+  function (entries) {
+    const entry = entries[0];
+
+    if (entry.isIntersecting && !statsAnimated) {
+      animateStats();
+      statsAnimated = true; // run only once
+    }
+  },
+  {
+    threshold: 0.4 // 40% section visible
+  }
+);
+
+// 6️⃣ Start observing
+statsObserver.observe(statsSection);
+
 
 
 
@@ -369,6 +426,45 @@ function subscribeNewsletter() {
 
 
 
+/*********************************************************
+ FADE-IN EVENT CARDS WHEN VISIBLE
+**********************************************************/
+
+// Select all fade cards
+function observeCards() {
+  const cards = document.querySelectorAll(".fadeCard");
+
+  const cardObserver = new IntersectionObserver(
+    function (entries, observer) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          observer.unobserve(entry.target); // animate once
+        }
+      });
+    },
+    {
+      threshold: 0.2 // 20% visible
+    }
+  );
+
+  cards.forEach(card => {
+    cardObserver.observe(card);
+  });
+}
+
+/*********************************************************
+ CLOSE MOBILE MENU AFTER CLICK
+**********************************************************/
+document.querySelectorAll(".mobileMenu .nav-link").forEach(link => {
+  link.addEventListener("click", () => {
+    const menu = document.getElementById("mainMenu");
+    if (menu.classList.contains("show")) {
+      new bootstrap.Collapse(menu).hide();
+    }
+  });
+});
+
 
 
 
@@ -376,4 +472,5 @@ function subscribeNewsletter() {
  INITIAL LOAD
 **********************************************************/
 renderEvents();
+observeCards();
 renderTrendingEvents();
