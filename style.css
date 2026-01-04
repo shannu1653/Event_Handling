@@ -1,92 +1,96 @@
-/* =========================
-   GLOBAL & UTIL
-========================= */
-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
+/* =========================================================
+   GLOBAL RESET & UTILITIES
+========================================================= */
+body {
+  padding-top: 72px; /* height of navbar */
 }
 
-/* Dark mode */
-.dark {
-  background: #111;
-  color: #fff;
+
+img{
+  display:block;
+  max-width:100%;
+  height:auto;
 }
 
-/* ROOT VARIABLES */
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
 :root{
   --accent:#ff5a2d;
   --muted:#f4f6fb;
-  --glass: rgba(255,255,255,0.7);
-  --cardShadow: 0 6px 24px rgba(13,18,30,0.08);
+  --glass:rgba(255,255,255,0.7);
+  --cardShadow:0 6px 24px rgba(13,18,30,0.08);
 }
 
-/* BODY */
+/* =========================================================
+   BODY
+========================================================= */
 body{
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  background: linear-gradient(180deg,#ffffff 0%, #f9fbff 100%);
+  font-family:Inter, system-ui, Arial, sans-serif;
+  background:linear-gradient(180deg,#ffffff 0%, #f9fbff 100%);
   color:#222;
-  -webkit-font-smoothing:antialiased;
 }
 
-/* ============================================================
-   NAVBAR (PREMIUM – SINGLE SOURCE OF TRUTH)
-============================================================ */
-.navbar {
-  background: #ffffff;
-  transition: all .35s ease;
-  z-index: 9999;
+/* =========================================================
+   NAVBAR
+========================================================= */
+.navbar{
+  background:#ffffff;
+  z-index:9999;
 }
 
-.eventbriteLogo {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  transition: .3s ease;
+.eventbriteLogo{
+  font-size:22px;
+  font-weight:700;
 }
 
-.nav-link {
-  font-size: 15px;
-  font-weight: 500;
-  color: #2d2d2d !important;
-  transition: .25s ease;
+/* nav links */
+.navlink{
+  font-size:15px;
+  font-weight:500;
+  color:#2d2d2d;
+  cursor:pointer;
 }
-.nav-link:hover {
-  color: var(--accent) !important;
-  transform: translateY(-2px);
+.navlink:hover{
+  color:var(--accent);
 }
 
-/* SEARCH */
-.searchBox {
-  background: #f8f6f9;
-  border: 1px solid #dfdce3;
-  border-radius: 40px;
-  padding: 8px 15px;
-  display: flex;
-  align-items: center;
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+.searchBox{
+  background:#f8f6f9;
+  border:1px solid #dfdce3;
+  border-radius:40px;
+  padding:8px 15px;
+  display:flex;
+  align-items:center;
 }
-.searchInput {
-  border: none;
-  background: transparent;
+
+.searchInput{
+  border:none;
+  background:transparent;
 }
-.searchInput:focus { outline: none; }
+.searchInput:focus{
+  outline:none;
+}
 
 /* LOCATION DROPDOWN */
-.locationDropdown {
-  position: absolute;
-  top: 55px;
-  width: 260px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  padding: 12px;
-  display: none;
-  z-index: 9999;
+.locationDropdown{
+  position:absolute;
+  top:55px;
+  width:260px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  padding:12px;
+  display:none;
+  z-index:9999;
 }
 
-/* ============================================================
-   HERO
-============================================================ */
+/* =========================================================
+   HERO SECTION
+========================================================= */
 .heroSlideWrapper{
   position:relative;
   height:450px;
@@ -94,14 +98,11 @@ body{
   overflow:hidden;
   margin-top:20px;
 }
+
 .heroImg{
   width:100%;
   height:100%;
   object-fit:cover;
-  transition: transform .8s ease;
-}
-.heroSlideWrapper:hover .heroImg{
-  transform: scale(1.03);
 }
 
 .heroContent{
@@ -109,16 +110,21 @@ body{
   top:50%;
   left:55%;
   transform:translateY(-50%);
-  color:white;
-  text-shadow: 0 6px 30px rgba(0,0,0,0.4);
+  color:#fff;
 }
-.heroTitle{ font-size:45px; }
+
+.heroTitle{
+  font-size:45px;
+  font-weight:700;
+}
+
 .heroSubtitle{
   font-size:36px;
   background:var(--accent);
   padding:6px 14px;
   border-radius:12px;
 }
+
 .heroBtn{
   margin-top:20px;
   background:#fff7e6;
@@ -127,9 +133,33 @@ body{
   font-weight:700;
 }
 
-/* ============================================================
-   EVENTS
-============================================================ */
+/* =========================================================
+   CATEGORY SECTION
+========================================================= */
+.categoryItem{
+  margin-bottom:20px;
+}
+
+.categoryCircle{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:var(--cardShadow);
+}
+
+.categoryTitle{
+  margin-top:8px;
+  font-size:14px;
+  font-weight:600;
+}
+
+/* =========================================================
+   EVENTS SECTION
+========================================================= */
 .eventsHeading{
   margin:30px 0 20px;
   font-size:26px;
@@ -142,33 +172,39 @@ body{
   border-radius:18px;
   overflow:hidden;
   box-shadow:var(--cardShadow);
-  transition:.28s;
-}
-.eventCard:hover{
-  transform:translateY(-8px);
 }
 
-/* 🔥 SINGLE FINAL IMAGE RULE (NO BACKGROUND EVER) */
 .eventImg{
   width:100%;
   height:180px;
   object-fit:cover;
-  display:block;
-  background:none !important;
 }
 
-.eventInfo{ padding:12px 15px; }
-.eventTitle{ font-size:15px; font-weight:600; }
-.eventDate{ font-size:14px; color:#666; }
-.eventPrice{ font-weight:700; }
+.eventInfo{
+  padding:12px 15px;
+}
 
-/* ============================================================
-   MODALS
-============================================================ */
+.eventTitle{
+  font-size:15px;
+  font-weight:600;
+}
+
+.eventDate{
+  font-size:14px;
+  color:#666;
+}
+
+.eventPrice{
+  font-weight:700;
+}
+
+/* =========================================================
+   MODAL STYLES
+========================================================= */
 .eventModalOverlay{
   position:fixed;
   inset:0;
-  background: rgba(6,8,20,0.45);
+  background:rgba(6,8,20,0.45);
   display:none;
   z-index:9000;
 }
@@ -182,12 +218,13 @@ body{
   position:fixed;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%) scale(.9);
+  transform:translate(-50%,-50%) scale(0.9);
   opacity:0;
   display:none;
   z-index:10000;
-  transition:.3s;
+  transition:0.3s;
 }
+
 .eventModal.show{
   display:block;
   opacity:1;
@@ -202,48 +239,191 @@ body{
   display:none;
 }
 
-/* ============================================================
+/* =========================================================
    FOOTER
-============================================================ */
+========================================================= */
 .footerSection{
   background:#0b0320;
-  color:white;
+  color:#fff;
   padding:28px 0;
+  text-align:center;
 }
 
-/* ============================================================
-   RESPONSIVE
-============================================================ */
+/* =========================================================
+   RESPONSIVE (MOBILE & TABLET PERFECT)
+========================================================= */
+@media (max-width: 992px){
+  .heroContent{
+    left:20%;
+  }
+}
+
 @media (max-width: 576px){
   .heroContent{
     left:10%;
     top:60%;
   }
-  .eventImagePreview{ height:180px; }
+
+  .heroTitle{
+    font-size:30px;
+  }
+
+  .heroSubtitle{
+    font-size:22px;
+  }
+
+  .eventImagePreview{
+    height:180px;
+  }
 }
 
-/* ============================================================
-   LOADER (KEPT)
-============================================================ */
-.loader{
-  position:fixed;
-  inset:0;
-  background:rgba(255,255,255,0.8);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:2000;
+
+/* navabr */
+
+/* =========================
+   NAVBAR PREMIUM FIX
+========================= */
+.navbar {
+  height: 72px;
 }
 
-.spinner{
-  width:50px;
-  height:50px;
-  border:5px solid #ddd;
-  border-top:5px solid var(--accent);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+.navbarSearch input {
+  max-width: 180px;
+  font-size: 14px;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg);}
+.nav-link {
+  font-size: 15px;
+  color: #222 !important;
+}
+
+.nav-link:hover {
+  color: #ff5a2d !important;
+}
+
+/* Mobile spacing */
+@media (max-width: 992px) {
+  .navbarSearch {
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  .navbarSearch input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+
+/* =========================
+   CATEGORY UI
+========================= */
+.categoryItem {
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.categoryCircle {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  font-size: 22px;
+  color: #ff5a2d;
+  transition: 0.3s;
+}
+
+.categoryItem:hover .categoryCircle {
+  transform: translateY(-6px);
+  background: #ff5a2d;
+  color: white;
+}
+
+.categoryTitle {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================
+   PREMIUM CREATE EVENT FORM
+========================= */
+.modalTitle {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.modalSubtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 18px;
+}
+
+.formGroup {
+  margin-bottom: 14px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #ff5a2d;
+  box-shadow: 0 0 0 2px rgba(255,90,45,0.15);
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btnPrimary {
+  flex: 1;
+  background: #ff5a2d;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btnPrimary:hover {
+  background: #e14a22;
+}
+
+.btnSecondary {
+  flex: 1;
+  background: #f1f1f1;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btnSecondary:hover {
+  background: #e0e0e0;
 }

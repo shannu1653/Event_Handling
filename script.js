@@ -1,361 +1,316 @@
-/* ===========================================================
-   script.js — Premium Eventbrite Clone (FINAL PRODUCTION VERSION)
-=========================================================== */
+/*********************************************************
+ GLOBAL VARIABLES
+**********************************************************/
 
-/* -------------------------
-   CONSTANTS
-------------------------- */
-const API_BASE = "https://aiven-deploye.onrender.com/api2";
+/* Get events from localStorage or create empty array */
+let events = JSON.parse(localStorage.getItem("events")) || [];
 
-/* -------------------------
-   IMAGE SAFETY
-------------------------- */
+/* Used to track edit mode */
+let editIndex = null;
 
+/* Store image as Base64 */
+let selectedImage = "";
 
-/* -------------------------
-   DOM ELEMENTS
-------------------------- */
-const locationBtn = document.getElementById("locationBtn");
-const locationDropdown = document.getElementById("locationDropdown");
-
+/*********************************************************
+ GET DOM ELEMENTS
+**********************************************************/
 const openCreateEvent = document.getElementById("openCreateEvent");
 const eventModal = document.getElementById("eventModal");
 const eventModalOverlay = document.getElementById("eventModalOverlay");
 const closeEventBtn = document.getElementById("closeEventBtn");
-const eventModalTitle = document.getElementById("eventModalTitle");
-
-const eventTitleInput = document.getElementById("eventTitleInput");
-const eventDateInput = document.getElementById("eventDateInput");
-const eventPriceInput = document.getElementById("eventPriceInput");
-const eventCategoryInput = document.getElementById("eventCategoryInput");
-const eventDescriptionInput = document.getElementById("eventDescriptionInput");
-const eventImageInput = document.getElementById("eventImageInput");
+const saveEventBtn = document.getElementById("saveEventBtn");
+const eventsContainer = document.getElementById("eventsContainer");
 const eventImagePreview = document.getElementById("eventImagePreview");
 
-const saveEventBtn = document.getElementById("saveEventBtn");
+/*********************************************************
+ OPEN CREATE EVENT MODAL
+**********************************************************/
+openCreateEvent.addEventListener("click", function () {
 
-const viewEventModal = document.getElementById("viewEventModal");
-const viewEventOverlay = document.getElementById("viewEventOverlay");
-const closeViewEventBtn = document.getElementById("closeViewEventBtn");
+    /* Show modal & overlay */
+    eventModal.style.display = "block";
+    eventModalOverlay.style.display = "block";
 
-const viewEventTitle = document.getElementById("viewEventTitle");
-const viewEventImage = document.getElementById("viewEventImage");
-const viewEventDate = document.getElementById("viewEventDate");
-const viewEventPrice = document.getElementById("viewEventPrice");
-const viewEventCategory = document.getElementById("viewEventCategory");
-const viewEventDescription = document.getElementById("viewEventDescription");
+    /* Add animation class */
+    setTimeout(function () {
+        eventModal.classList.add("show");
+    }, 10);
 
-const eventsContainer = document.getElementById("eventsContainer");
-const categoryFilter = document.getElementById("categoryFilter");
-const searchFilter = document.getElementById("searchFilter");
-const mainSearch = document.getElementById("mainSearch");
-
-/* -------------------------
-   HELPERS
-------------------------- */
-function qsa(sel) {
-    return Array.from(document.querySelectorAll(sel));
-}
-
-/* -------------------------
-   AUTH CHECK
-------------------------- */
-if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-}
-
-function logout() {
-    localStorage.clear();
-    window.location.href = "login.html";
-}
-
-/* -------------------------
-   LOCATION DROPDOWN
-------------------------- */
-locationBtn.addEventListener("click", e => {
-    e.stopPropagation();
-    locationDropdown.style.display =
-        locationDropdown.style.display === "block" ? "none" : "block";
+    /* Clear old data */
+    clearForm();
 });
 
-document.addEventListener("click", () => {
-    locationDropdown.style.display = "none";
-});
+/*********************************************************
+ CLOSE MODAL FUNCTION
+**********************************************************/
+function closeModal() {
 
-qsa("#locationDropdown .locItem").forEach(item => {
-    item.addEventListener("click", () => {
-        if (item.dataset.action === "useLocation") {
-            getUserLocation();
-        } else if (item.dataset.action === "online") {
-            locationBtn.innerText = "Online events";
-        } else {
-            locationBtn.innerText = item.dataset.value;
-        }
-        locationDropdown.style.display = "none";
-    });
-});
+    /* Remove animation */
+    eventModal.classList.remove("show");
 
-/* -------------------------
-   GEOLOCATION
-------------------------- */
-function getUserLocation() {
-    navigator.geolocation.getCurrentPosition(async pos => {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`
-        );
-        const data = await res.json();
-        locationBtn.innerText = data.address?.city || "Your Location";
-    });
+    /* Hide after animation */
+    setTimeout(function () {
+        eventModal.style.display = "none";
+        eventModalOverlay.style.display = "none";
+    }, 300);
+
+    editIndex = null;
 }
 
-/* -------------------------
-   MODALS
-------------------------- */
-let editingEventId = null;
+/* Close modal when clicking cancel button */
+closeEventBtn.addEventListener("click", closeModal);
 
-function showModal(modal, overlay) {
-    overlay.style.display = "block";
-    modal.style.display = "block";
-    setTimeout(() => modal.classList.add("show"), 10);
-}
+/* Close modal when clicking overlay */
+eventModalOverlay.addEventListener("click", closeModal);
 
-function hideModal(modal, overlay) {
-    modal.classList.remove("show");
-    setTimeout(() => {
-        modal.style.display = "none";
-        overlay.style.display = "none";
-    }, 250);
-}
+/*********************************************************
+ IMAGE UPLOAD + PREVIEW (BASE64)
+**********************************************************/
+document.getElementById("eventImageInput").addEventListener("change", function () {
 
-openCreateEvent.addEventListener("click", () => {
-    editingEventId = null;
-    eventModalTitle.innerText = "Create Event";
-    resetForm();
-    showModal(eventModal, eventModalOverlay);
-});
-
-closeEventBtn.onclick = () => hideModal(eventModal, eventModalOverlay);
-eventModalOverlay.onclick = () => hideModal(eventModal, eventModalOverlay);
-closeViewEventBtn.onclick = () => hideModal(viewEventModal, viewEventOverlay);
-viewEventOverlay.onclick = () => hideModal(viewEventModal, viewEventOverlay);
-
-/* -------------------------
-   RESET FORM
-------------------------- */
-function resetForm() {
-    eventTitleInput.value = "";
-    eventDateInput.value = "";
-    eventPriceInput.value = "";
-    eventCategoryInput.value = "Holidays";
-    eventDescriptionInput.value = "";
-    eventImageInput.value = "";
-    eventImagePreview.style.display = "none";
-}
-
-/* -------------------------
-   IMAGE PREVIEW
-------------------------- */
-eventImageInput.addEventListener("change", function () {
-    if (!this.files[0]) return;
+    const file = this.files[0];
+    if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = e => {
-        eventImagePreview.src = e.target.result;
+
+    reader.onload = function () {
+        selectedImage = reader.result;
+
+        /* Show preview image */
+        eventImagePreview.src = selectedImage;
         eventImagePreview.style.display = "block";
     };
-    reader.readAsDataURL(this.files[0]);
+
+    reader.readAsDataURL(file);
 });
 
-/* -------------------------
-   SAVE EVENT
-------------------------- */
-saveEventBtn.addEventListener("click", async () => {
-    if (!eventTitleInput.value || !eventDateInput.value) {
-        alert("Title and Date are required");
+/*********************************************************
+ SAVE EVENT (CREATE / EDIT)
+**********************************************************/
+saveEventBtn.addEventListener("click", function () {
+
+    /* Get input values */
+    const title = document.getElementById("eventTitleInput").value.trim();
+    const date = document.getElementById("eventDateInput").value.trim();
+    const price = document.getElementById("eventPriceInput").value.trim();
+    const category = document.getElementById("eventCategoryInput").value;
+    const description = document.getElementById("eventDescriptionInput").value.trim();
+
+    /* Validation */
+    if (!title || !date || !price || !category || !description || !selectedImage) {
+        alert("Please fill all fields");
         return;
     }
 
-    const formData = new FormData();
-    formData.append("title", eventTitleInput.value);
-    formData.append("date", eventDateInput.value);
-    formData.append("price", eventPriceInput.value);
-    formData.append("category", eventCategoryInput.value);
-    formData.append("description", eventDescriptionInput.value);
+    /* Event object */
+    const eventData = {
+        title: title,
+        date: date,
+        price: price,
+        category: category,
+        description: description,
+        image: selectedImage
+    };
 
-    if (eventImageInput.files.length > 0) {
-        formData.append("image", eventImageInput.files[0]);
+    /* Add or update event */
+    if (editIndex === null) {
+        events.push(eventData);
+    } else {
+        events[editIndex] = eventData;
     }
 
-    const url = editingEventId === null
-        ? `${API_BASE}/create-event/`
-        : `${API_BASE}/update-event/${editingEventId}/`;
+    /* Save to localStorage */
+    localStorage.setItem("events", JSON.stringify(events));
 
-    await fetch(url, { method: "POST", body: formData });
+    /* Refresh UI */
+    renderEvents();
 
-    hideModal(eventModal, eventModalOverlay);
-    loadEvents();
+    /* Close modal */
+    closeModal();
 });
 
-/* -------------------------
-   LOAD EVENTS
-------------------------- */
-/* -------------------------
-   LOAD EVENTS (FINAL FIXED)
-------------------------- */
-async function loadEvents() {
+/*********************************************************
+ RENDER EVENTS ON PAGE
+**********************************************************/
+function renderEvents() {
+
+    /* Clear old cards */
     eventsContainer.innerHTML = "";
 
-    const res = await fetch(`${API_BASE}/events/`);
-    const events = await res.json();
-
-    // store globally for view/edit
-    window.backendEvents = events;
-
-    events.forEach((ev, idx) => {
-
-        // ✅ USE IMAGE URL ONLY IF IT IS ABSOLUTE
-        const imageUrl =
-            ev.image && ev.image.startsWith("http")
-                ? ev.image
-                : FALLBACK_IMAGE;
+    /* Loop through events */
+    events.forEach(function (event, index) {
 
         const col = document.createElement("div");
-        col.className = "col-12 col-sm-6 col-md-4 col-lg-3";
+        col.className = "colmd4";
 
-        // ⚠️ DO NOT PUT src DIRECTLY IN HTML
         col.innerHTML = `
-            <div class="eventCard" data-category="${ev.category}">
-                <img class="eventImg" loading="lazy" />
+            <div class="eventCard">
+                <img src="${event.image}" class="eventImg">
                 <div class="eventInfo">
-                    <h5 class="eventTitle">${ev.title}</h5>
-                    <p class="eventDate">${ev.date}</p>
-                    <p class="eventPrice">${ev.price}</p>
-                    <div class="d-flex gap-2 p-2">
-                        <button class="btn btn-primary btn-sm" onclick="viewEvent(${idx})">View</button>
-                        <button class="btn btn-warning btn-sm" onclick="editEvent(${idx})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})">Delete</button>
-                        <button class="btn btn-success btn-sm" onclick="buyTicket(${idx})">Buy</button>
-                    </div>
+                    <h5 class="eventTitle">${event.title}</h5>
+                    <p class="eventDate">${event.date}</p>
+                    <p class="eventPrice">₹ ${event.price}</p>
+                    <p>${event.category}</p>
+
+                    <button class="btn btnprimary btnsm" onclick="viewEvent(${index})">View</button>
+                    <button class="btn btnwarning btnsm" onclick="editEvent(${index})">Edit</button>
+                    <button class="btn btnsuccess btnsm" onclick="buyEvent(${index})">Buy</button>
+                    <button class="btn btndanger btnsm" onclick="deleteEvent(${index})">Delete</button>
                 </div>
             </div>
         `;
 
         eventsContainer.appendChild(col);
-
-        // ✅ SET IMAGE SRC SAFELY
-        const img = col.querySelector(".eventImg");
-        img.src = imageUrl;
-        img.onerror = () => {
-            img.src = FALLBACK_IMAGE;
-        };
     });
-
-    filterEvents();
 }
 
-
-/* -------------------------
-   VIEW EVENT
-------------------------- */
+/*********************************************************
+ VIEW EVENT DETAILS
+**********************************************************/
 function viewEvent(index) {
-    const ev = window.backendEvents[index];
-
-    viewEventTitle.innerText = ev.title;
-    viewEventImage.src = safeImage(ev.image);
-    viewEventDate.innerText = ev.date;
-    viewEventPrice.innerText = ev.price;
-    viewEventCategory.innerText = ev.category;
-    viewEventDescription.innerText = ev.description;
-
-    showModal(viewEventModal, viewEventOverlay);
+    alert(
+        events[index].title + "\n\n" +
+        events[index].description
+    );
 }
 
-/* -------------------------
-   EDIT EVENT
-------------------------- */
+/*********************************************************
+ EDIT EVENT
+**********************************************************/
 function editEvent(index) {
-    const ev = window.backendEvents[index];
-    editingEventId = ev.id;
 
-    eventTitleInput.value = ev.title;
-    eventDateInput.value = ev.date;
-    eventPriceInput.value = ev.price;
-    eventCategoryInput.value = ev.category;
-    eventDescriptionInput.value = ev.description;
+    editIndex = index;
+    const event = events[index];
 
-    if (ev.image) {
-        eventImagePreview.src = safeImage(ev.image);
-        eventImagePreview.style.display = "block";
+    /* Fill form with existing data */
+    document.getElementById("eventTitleInput").value = event.title;
+    document.getElementById("eventDateInput").value = event.date;
+    document.getElementById("eventPriceInput").value = event.price;
+    document.getElementById("eventCategoryInput").value = event.category;
+    document.getElementById("eventDescriptionInput").value = event.description;
+
+    selectedImage = event.image;
+    eventImagePreview.src = event.image;
+    eventImagePreview.style.display = "block";
+
+    /* Open modal */
+    eventModal.style.display = "block";
+    eventModalOverlay.style.display = "block";
+
+    setTimeout(function () {
+        eventModal.classList.add("show");
+    }, 10);
+}
+
+/*********************************************************
+ HERO SLIDING BAR
+**********************************************************/
+
+ const heroCarousel = document.querySelector('#heroSlider');
+  new bootstrap.Carousel(heroCarousel, {
+    interval: 4000,
+    ride: 'carousel',
+    pause: false
+  });
+
+
+/*********************************************************
+ DELETE EVENT
+**********************************************************/
+function deleteEvent(index) {
+
+    if (confirm("Delete this event?")) {
+        events.splice(index, 1);
+        localStorage.setItem("events", JSON.stringify(events));
+        renderEvents();
     }
-
-    eventModalTitle.innerText = "Edit Event";
-    showModal(eventModal, eventModalOverlay);
 }
 
-/* -------------------------
-   DELETE EVENT
-------------------------- */
-async function deleteEvent(id) {
-    if (!confirm("Delete this event?")) return;
-    await fetch(`${API_BASE}/delete-event/${id}/`);
-    loadEvents();
+/*********************************************************
+ BUY EVENT (STORE TICKET)
+**********************************************************/
+function buyEvent(index) {
+
+    localStorage.setItem(
+        "selectedTicket",
+        JSON.stringify(events[index])
+    );
+
+    window.location.href = "findmytickets.html";
 }
 
-/* -------------------------
-   BUY TICKET
-------------------------- */
-function buyTicket(index) {
-    const ev = window.backendEvents[index];
-    const cart = JSON.parse(localStorage.getItem("tickets") || "[]");
+/*********************************************************
+ CLEAR FORM FIELDS
+**********************************************************/
+function clearForm() {
 
-    cart.push({
-        title: ev.title,
-        date: ev.date,
-        price: Number(ev.price),
-        image: safeImage(ev.image),
-        ticketId: "TID-" + Date.now()
-    });
+    document.getElementById("eventTitleInput").value = "";
+    document.getElementById("eventDateInput").value = "";
+    document.getElementById("eventPriceInput").value = "";
+    document.getElementById("eventDescriptionInput").value = "";
+    document.getElementById("eventImageInput").value = "";
 
-    localStorage.setItem("tickets", JSON.stringify(cart));
-    alert("Ticket added!");
+    eventImagePreview.src = "";
+    eventImagePreview.style.display = "none";
+
+    selectedImage = "";
 }
 
-/* -------------------------
-   FILTERS
-------------------------- */
-categoryFilter.onchange = filterEvents;
-searchFilter.oninput = filterEvents;
-mainSearch.oninput = e => {
-    searchFilter.value = e.target.value;
-    filterEvents();
-};
+/*********************************************************
+ LOAD EVENTS ON PAGE LOAD
+**********************************************************/
+renderEvents();
+
+
+/*************************************
+ CATEGORY FILTER (DROPDOWN)
+*************************************/
+const categoryFilter = document.getElementById("categoryFilter");
+
+categoryFilter.addEventListener("change", function () {
+  filterEvents();
+});
 
 function filterEvents() {
-    const cat = categoryFilter.value;
-    const search = searchFilter.value.toLowerCase();
+  const selectedCategory = categoryFilter.value;
 
-    qsa(".eventCard").forEach(card => {
-        const okCat = cat === "All" || card.dataset.category === cat;
-        const okSearch = card
-            .querySelector(".eventTitle")
-            .innerText.toLowerCase()
-            .includes(search);
+  eventsContainer.innerHTML = "";
 
-        card.parentElement.style.display =
-            okCat && okSearch ? "block" : "none";
-    });
+  events.forEach(function (event, index) {
+
+    if (selectedCategory === "All" || event.category === selectedCategory) {
+
+      const col = document.createElement("div");
+      col.className = "col-md-4";
+
+      col.innerHTML = `
+        <div class="eventCard">
+          <img src="${event.image}" class="eventImg">
+          <div class="eventInfo">
+            <h5 class="eventTitle">${event.title}</h5>
+            <p class="eventDate">${event.date}</p>
+            <p class="eventPrice">₹ ${event.price}</p>
+            <p>${event.category}</p>
+
+            <button class="btn btn-sm btn-primary" onclick="viewEvent(${index})">View</button>
+            <button class="btn btn-sm btn-warning" onclick="editEvent(${index})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteEvent(${index})">Delete</button>
+          </div>
+        </div>
+      `;
+
+      eventsContainer.appendChild(col);
+    }
+  });
 }
 
-
-/* -------------------------
-   INIT
-------------------------- */
-loadEvents();
-
-
-const themeToggle = document.getElementById("themeToggle");
-if (themeToggle) {
-    themeToggle.onclick = () => {
-        document.body.classList.toggle("dark");
-    };
-}
+/*************************************
+ CATEGORY ICON CLICK FILTER
+*************************************/
+document.querySelectorAll(".categoryItem").forEach(function (item) {
+  item.addEventListener("click", function () {
+    const selected = this.getAttribute("data-category");
+    categoryFilter.value = selected;
+    filterEvents();
+  });
+});
