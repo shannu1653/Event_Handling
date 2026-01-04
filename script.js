@@ -93,10 +93,11 @@ saveEventBtn.addEventListener("click", function () {
     /* Validation */
     const imageUrl = document.getElementById("eventImageInput").value.trim();
 
-    if (!title || !date || !price || !category || !description || !imageUrl) {
-    alert("Please fill all fields");
-    return;
+if (!title || !date || !price || !category || !description || !imageUrl) {
+  alert("Please fill all fields");
+  return;
 }
+
 
 
     /* Event object */
@@ -236,7 +237,7 @@ function editEvent(index) {
     document.getElementById("eventCategoryInput").value = event.category;
     document.getElementById("eventDescriptionInput").value = event.description;
 
-    selectedImage = event.image;
+
     eventImagePreview.src = event.image;
     eventImagePreview.style.display = "block";
 
@@ -299,8 +300,6 @@ function clearForm() {
 
     eventImagePreview.src = "";
     eventImagePreview.style.display = "none";
-
-    selectedImage = "";
 }
 
 /*********************************************************
@@ -328,8 +327,7 @@ function filterEvents() {
         if (selectedCategory === "All" || event.category === selectedCategory) {
 
             const col = document.createElement("div");
-            col.className = "col-md-4";
-
+            col.className = "col-12 col-md-6 col-lg-4";
             col.innerHTML = `
         <div class="eventCard">
           <img src="${event.image}" class="eventImg">
@@ -349,6 +347,16 @@ function filterEvents() {
             eventsContainer.appendChild(col);
         }
     });
+
+
+    const emptyState = document.getElementById("emptyState");
+
+if (eventsContainer.children.length === 0) {
+  emptyState.style.display = "block";
+} else {
+  emptyState.style.display = "none";
+}
+
 }
 
 /*************************************
