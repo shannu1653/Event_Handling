@@ -8,9 +8,33 @@ if (localStorage.getItem("loggedIn") !== "true") {
   window.location.href = "login.html";
 }
 
+
+/*********************************************************
+ HELPERS FOR SORTING
+**********************************************************/
+
+// Convert price string → number
+function getPriceNumber(price) {
+  return Number(price) || 0;
+}
+
+// Convert date text → sortable number (simple)
+function getDateValue(dateText) {
+  if (dateText.includes("Today")) return 1;
+  if (dateText.includes("Tomorrow")) return 2;
+  if (dateText.includes("Sunday")) return 3;
+  return 99; // fallback
+}
+
+
 // Load events from localStorage OR empty array
 let events = JSON.parse(localStorage.getItem("events")) || [];
+let filteredEvents = [...events];
 
+
+
+// ✅ BACKUP ORIGINAL ORDER (FOR SORT RESET)
+let originalEvents = [...events];
 // Track edit mode
 let editIndex = null;
 
@@ -46,6 +70,8 @@ if (!localStorage.getItem("events") || events.length === 0) {
   ];
 
   localStorage.setItem("events", JSON.stringify(events));
+  filteredEvents = [...events];   // ✅ ADD THIS LINE
+originalEvents = [...events]; 
 }
 
 /*********************************************************
@@ -144,6 +170,8 @@ saveEventBtn?.addEventListener("click", () => {
   }
 
   localStorage.setItem("events", JSON.stringify(events));
+  originalEvents = [...events];  
+  filteredEvents = [...events];
   renderEvents();
   renderTrendingEvents();
   closeModal();
@@ -157,14 +185,14 @@ function renderEvents() {
 
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-  if (events.length === 0) {
+  if (filteredEvents.length === 0) {
     emptyState.style.display = "block";
     return;
   }
 
   emptyState.style.display = "none";
 
-  events.forEach((event, index) => {
+  filteredEvents.forEach((event, index) => {
     const col = document.createElement("div");
     col.className = "col-12 col-md-6 col-lg-4";
 
@@ -200,26 +228,51 @@ function renderEvents() {
 
     eventsContainer.appendChild(col);
   });
+   observeCards(); 
 }
 
+
 /*********************************************************
- SORT EVENTS (FIXED)
+ PRICE NORMALIZER (VERY IMPORTANT)
 **********************************************************/
+function getPrice(price) {
+  // Remove currency symbols and text
+  return Number(price.toString().replace(/[^0-9]/g, "")) || 0;
+}
+
+/*************************************
+ SORT EVENTS (FIXED & WORKING)
+*************************************/
 sortSelect?.addEventListener("change", function () {
   const type = this.value;
 
+  // 🔁 Reset to original order
+  if (type === "") {
+    events = [...originalEvents];
+    filteredEvents = [...events];
+    renderEvents();        // ✅ ADD THIS LINE
+    return; 
+  }
+
+  // 🔽 Price: Low → High
   if (type === "low") {
-    events.sort((a, b) => Number(a.price) - Number(b.price));
+    events.sort((a, b) => getPrice(a.price) - getPrice(b.price));
   }
 
+  // 🔼 Price: High → Low
   if (type === "high") {
-    events.sort((a, b) => Number(b.price) - Number(a.price));
+    events.sort((a, b) => getPrice(b.price) - getPrice(a.price));
   }
 
+  // Save new order
   localStorage.setItem("events", JSON.stringify(events));
+  filteredEvents = [...events]; 
+  // Re-render UI
   renderEvents();
+  observeCards();  
   renderTrendingEvents();
 });
+
 
 /*********************************************************
  CATEGORY FILTER
@@ -228,37 +281,24 @@ categoryFilter?.addEventListener("change", filterEvents);
 
 function filterEvents() {
   const selected = categoryFilter.value;
-  eventsContainer.innerHTML = "";
 
-  events.forEach((event, index) => {
-    if (selected === "All" || event.category === selected) {
-      const col = document.createElement("div");
-      col.className = "col-12 col-md-6 col-lg-4";
-      col.innerHTML = `
-        <div class="eventCard">
-          <img src="${event.image}" class="eventImg">
-          <div class="eventInfo">
-            <h5>${event.title}</h5>
-            <p>${event.date}</p>
-            <p>₹ ${event.price}</p>
-          </div>
-        </div>
-      `;
-      eventsContainer.appendChild(col);
-    }
-  });
+  if (selected === "All") {
+    filteredEvents = [...events];
+  } else {
+    filteredEvents = events.filter(e => e.category === selected);
+  }
 
-  emptyState.style.display =
-    eventsContainer.children.length === 0 ? "block" : "none";
+  renderEvents();      // ✅ ALWAYS USE renderEvents
+  observeCards();
 }
+
 
 /*********************************************************
  WISHLIST TOGGLE
 **********************************************************/
 function toggleWishlist(index) {
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  const event = events[index];
-
+  const event = filteredEvents[index];
   const found = wishlist.findIndex(w => w.title === event.title);
 
   if (found === -1) {
@@ -268,8 +308,22 @@ function toggleWishlist(index) {
   }
 
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  filteredEvents = [...events];  
   renderEvents();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*********************************************************
  TRENDING EVENTS
@@ -295,17 +349,37 @@ function renderTrendingEvents() {
 /*********************************************************
  VIEW / EDIT / DELETE / BUY
 **********************************************************/
-function viewEvent(index) { alert(events[index].title); }
-function editEvent(index) { editIndex = index; }
+function viewEvent(index) {
+  alert(filteredEvents[index].title);
+}
+
+function editEvent(index) {
+  editIndex = events.findIndex(
+    e => e.title === filteredEvents[index].title
+  );
+}
+
 function deleteEvent(index) {
+  const realIndex = events.findIndex(
+    e => e.title === filteredEvents[index].title
+  );
+
   if (confirm("Delete event?")) {
-    events.splice(index, 1);
+    events.splice(realIndex, 1);
     localStorage.setItem("events", JSON.stringify(events));
+
+    filteredEvents = [...events];
+    originalEvents = [...events];
+
     renderEvents();
   }
 }
+
 function buyEvent(index) {
-  localStorage.setItem("selectedTicket", JSON.stringify(events[index]));
+  localStorage.setItem(
+    "selectedTicket",
+    JSON.stringify(filteredEvents[index])
+  );
   window.location.href = "findmytickets.html";
 }
 
