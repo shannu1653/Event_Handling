@@ -350,14 +350,67 @@ function renderTrendingEvents() {
  VIEW / EDIT / DELETE / BUY
 **********************************************************/
 function viewEvent(index) {
-  alert(filteredEvents[index].title);
+  const event = filteredEvents[index];
+
+  document.getElementById("viewImage").src = event.image;
+  document.getElementById("viewTitle").innerText = event.title;
+  document.getElementById("viewDate").innerText = event.date;
+  document.getElementById("viewCategory").innerText = event.category;
+  document.getElementById("viewPrice").innerText = event.price;
+  document.getElementById("viewDescription").innerText = event.description;
+
+  document.getElementById("viewModal").style.display = "block";
+  document.getElementById("viewModalOverlay").style.display = "block";
+
+  setTimeout(() => {
+    document.getElementById("viewModal").classList.add("show");
+  }, 10);
 }
 
-function editEvent(index) {
-  editIndex = events.findIndex(
-    e => e.title === filteredEvents[index].title
-  );
+
+function closeViewModal() {
+  document.getElementById("viewModal").classList.remove("show");
+
+  setTimeout(() => {
+    document.getElementById("viewModal").style.display = "none";
+    document.getElementById("viewModalOverlay").style.display = "none";
+  }, 200);
 }
+
+document.getElementById("viewModalOverlay").onclick = closeViewModal;
+
+
+
+
+
+
+function editEvent(index) {
+  const selectedEvent = filteredEvents[index];
+
+  // find actual index in main events array
+  editIndex = events.findIndex(
+    e =>
+      e.title === selectedEvent.title &&
+      e.date === selectedEvent.date
+  );
+
+  // open modal
+  eventModal.style.display = "block";
+  eventModalOverlay.style.display = "block";
+  setTimeout(() => eventModal.classList.add("show"), 10);
+
+  // fill form
+  document.getElementById("eventTitleInput").value = selectedEvent.title;
+  document.getElementById("eventDateInput").value = selectedEvent.date;
+  document.getElementById("eventPriceInput").value = selectedEvent.price;
+  document.getElementById("eventCategoryInput").value = selectedEvent.category;
+  document.getElementById("eventDescriptionInput").value = selectedEvent.description;
+  document.getElementById("eventImageInput").value = selectedEvent.image;
+
+  eventImagePreview.src = selectedEvent.image;
+  eventImagePreview.style.display = "block";
+}
+
 
 function deleteEvent(index) {
   const realIndex = events.findIndex(

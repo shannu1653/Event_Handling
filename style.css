@@ -1168,3 +1168,51 @@ body{
 .navbar-toggler:focus {
   box-shadow: none;
 }
+
+
+
+
+
+/* view event */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  z-index: 1000;
+}
+
+.viewModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: #fff;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  display: none;
+  z-index: 1001;
+  transition: 0.3s ease;
+}
+
+.viewModal.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.viewModal img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.closeBtn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
